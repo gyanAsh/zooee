@@ -7,7 +7,7 @@
 	const { children } = $props();
 </script>
 
-<div class="relative grid min-h-dvh bg-amber-700">
+<div class="relative grid min-h-dvh bg-olive-50">
 	<TopLayout />
 	<LeftLayout />
 	<div class="grow">{@render children()}</div>

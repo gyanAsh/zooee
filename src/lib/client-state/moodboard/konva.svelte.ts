@@ -42,7 +42,7 @@ export const clips = new PersistedState<ClipItem[]>('clips', [
 			awayFromTop: 100,
 			awayFromSide: 100,
 			position: 'right',
-			fill: 'lightyellow',
+			fill: 'lightgreen',
 			rotation: 0
 		}
 	},

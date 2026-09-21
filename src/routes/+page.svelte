@@ -1,3 +1,3 @@
-<h1>Welcome to your library project</h1>
-<p>Create your package using @sveltejs/package and preview/showcase your work with SvelteKit</p>
-<p>Visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to read the documentation</p>
+<section class="flex min-h-dvh w-full items-center justify-center">
+	<h1 class="text-7xl font-medium">Zooee/verbo Link</h1>
+</section>

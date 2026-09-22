@@ -77,8 +77,10 @@
 		"svelte"
 	],
 	"dependencies": {
+		"bits-ui": "^2.19.2",
 		"konva": "^10.6.0",
 		"runed": "^0.37.1",
-		"svelte-konva": "^1.0.1"
+		"svelte-konva": "^1.0.1",
+		"tailwind-animations": "^1.0.2"
 	}
 }

@@ -4,7 +4,8 @@
 	import type Konva from 'konva';
 	import Mainlayout from './MainLayout.svelte';
 	import { Stage, Layer } from 'svelte-konva';
-	import type { SvelteComponent } from 'svelte';
+	import { tick, type SvelteComponent } from 'svelte';
+	import Image from '$lib/components/CanvasMoodboard/Image.svelte';
 
 	let container: HTMLDivElement;
 	let layerComp: SvelteComponent & { node: Konva.Layer };
@@ -24,10 +25,15 @@
 		const layer = layerComp?.node;
 		if (!layer) return;
 		const order = clips_items.map((c) => c.id);
-		order.forEach((id, i) => {
-			layer.findOne<Konva.Node>(`#${id}`)?.zIndex(i);
+
+		tick().then(() => {
+			for (const id of order) {
+				const node = layer.findOne<Konva.Node>(`#${id}`);
+				if (node && node.getParent() === layer) node.moveToTop();
+				else console.error(`not found :${id}, node : ${node} , nodeparent : ${node?.getParent()}`);
+			}
+			layer.batchDraw();
 		});
-		layer.batchDraw();
 	});
 </script>
 
@@ -38,6 +44,8 @@
 				{#each clips_items as clip (clip.id)}
 					{#if clip.type === 'rect'}
 						<Rectange id={clip.id} bind:rect={clip.attr} />
+					{:else if clip.type === 'img'}
+						<Image id={clip.id} bind:img={clip.attr} />
 					{/if}
 				{/each}
 			</Layer>

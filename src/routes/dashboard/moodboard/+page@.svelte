@@ -1,10 +1,15 @@
 <script lang="ts">
 	import { stage_state, clips } from '$lib/client-state/moodboard/konva.svelte.js';
 	import Rectange from '$lib/components/CanvasMoodboard/Rectange.svelte';
+	import type Konva from 'konva';
 	import Mainlayout from './MainLayout.svelte';
 	import { Stage, Layer } from 'svelte-konva';
+	import type { SvelteComponent } from 'svelte';
 
 	let container: HTMLDivElement;
+	let layerComp: SvelteComponent & { node: Konva.Layer };
+
+	let clips_items = $derived(clips.current);
 
 	$effect(() => {
 		const ro = new ResizeObserver(([entry]) => {
@@ -15,15 +20,24 @@
 		ro.observe(container);
 		return () => ro.disconnect();
 	});
+	$effect(() => {
+		const layer = layerComp?.node;
+		if (!layer) return;
+		const order = clips_items.map((c) => c.id);
+		order.forEach((id, i) => {
+			layer.findOne<Konva.Node>(`#${id}`)?.zIndex(i);
+		});
+		layer.batchDraw();
+	});
 </script>
 
 <Mainlayout>
 	<div bind:this={container} style="width:100dvw; height:100dvh; position:relative;">
 		<Stage width={stage_state.current.width} height={stage_state.current.height}>
-			<Layer>
-				{#each clips.current as clip (clip.id)}
+			<Layer bind:this={layerComp}>
+				{#each clips_items as clip (clip.id)}
 					{#if clip.type === 'rect'}
-						<Rectange rect={clip.attr} />
+						<Rectange id={clip.id} bind:rect={clip.attr} />
 					{/if}
 				{/each}
 			</Layer>

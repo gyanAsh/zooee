@@ -6,9 +6,10 @@
 
 	interface ComponentProps {
 		rect: RectDimensions;
+		id: string;
 	}
 
-	const { rect }: ComponentProps = $props();
+	const { rect = $bindable(), id }: ComponentProps = $props();
 
 	let x = $derived(
 		rect.position === 'left'
@@ -23,6 +24,7 @@
 <Rect
 	{x}
 	{y}
+	{id}
 	width={rect.width}
 	height={rect.height}
 	draggable

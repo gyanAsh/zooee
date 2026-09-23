@@ -8,9 +8,12 @@
 </script>
 
 <div class="relative grid min-h-dvh bg-olive-50">
-	<TopLayout />
-	<LeftLayout />
+	<section class="z-9999">
+		<BottomLayout />
+		<LeftLayout />
+		<RightLayout />
+		<TopLayout />
+	</section>
+
 	<div class="grow">{@render children()}</div>
-	<RightLayout />
-	<BottomLayout />
 </div>

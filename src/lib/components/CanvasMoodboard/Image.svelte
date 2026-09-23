@@ -26,25 +26,23 @@
 	let img_height = $derived(image.status === 'loaded' ? image.size.height : img.height);
 </script>
 
-{#if image.status == 'loaded'}
-	<Image
-		{x}
-		{y}
-		{id}
-		image={image.current}
-		width={img_width}
-		height={img_height}
-		draggable
-		fill={img.fill}
-		rotation={img.rotation}
-		ondragend={(e: KonvaEventObject<DragEvent>) => {
-			img.awayFromSide =
-				img.position === 'left'
-					? e.target.x()
-					: img.position === 'right'
-						? stage_state.current.width - img.width - e.target.x()
-						: stage_state.current.width / 2 - e.target.x() - img.width / 2;
-			img.awayFromTop = e.target.y();
-		}}
-	/>
-{/if}
+<Image
+	{x}
+	{y}
+	{id}
+	image={image.current}
+	width={img_width}
+	height={img_height}
+	draggable
+	fill={img.fill}
+	rotation={img.rotation}
+	ondragend={(e: KonvaEventObject<DragEvent>) => {
+		img.awayFromSide =
+			img.position === 'left'
+				? e.target.x()
+				: img.position === 'right'
+					? stage_state.current.width - img.width - e.target.x()
+					: stage_state.current.width / 2 - e.target.x() - img.width / 2;
+		img.awayFromTop = e.target.y();
+	}}
+/>

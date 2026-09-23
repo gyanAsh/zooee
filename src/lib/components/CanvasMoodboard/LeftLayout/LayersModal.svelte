@@ -85,7 +85,7 @@
 <!-- Component flies in from the left (-x) and out to the right (+x) -->
 
 <section
-	class="absolute top-0 left-17 flex h-full w-65 flex-col gap-2 border-r p-2"
+	class="absolute top-0 left-17 flex h-full w-65 flex-col gap-2 border-r bg-white p-2"
 	in:fly={{ x: -10, duration: 130, easing: cubicOut }}
 	out:fly={{ x: -10, duration: 130, easing: cubicIn }}
 >
@@ -147,7 +147,7 @@
 					⋮ ⋮ ⋮
 				</span>
 				<span class="flex-1 text-start text-sm">
-					{clip.type === 'rect' ? clip.attr.fill : 'circle'}</span
+					{clip.type === 'rect' ? clip.attr.fill : clip.type}</span
 				>
 			</button>
 		{/each}

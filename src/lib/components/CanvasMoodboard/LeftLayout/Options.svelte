@@ -3,7 +3,7 @@
 	import LayersModal from './LayersModal.svelte';
 </script>
 
-<section class="relative h-full">
+<section class="relative h-full bg-white">
 	<div class="py-2">
 		<button
 			aria-label="layers"

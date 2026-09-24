@@ -92,14 +92,5 @@ export const clips = new PersistedState<ClipItem[]>('clips', [
 			fill: 'lightgreen',
 			rotation: 0
 		}
-	},
-	{
-		type: 'circle',
-		id: 'poui7',
-		attr: {
-			radius: 50,
-			cx: 20,
-			cy: 30
-		}
 	}
 ]);

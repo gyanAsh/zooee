@@ -85,7 +85,9 @@
 <!-- Component flies in from the left (-x) and out to the right (+x) -->
 
 <section
-	class="absolute top-0 left-17 flex h-full w-65 flex-col gap-2 border-r bg-white p-2"
+	class="absolute top-0 left-17 flex h-full w-65 flex-col gap-2 border-r p-2 {isDragging
+		? 'bg-gray-50'
+		: 'bg-white'}"
 	in:fly={{ x: -10, duration: 130, easing: cubicOut }}
 	out:fly={{ x: -10, duration: 130, easing: cubicIn }}
 >
@@ -113,7 +115,7 @@
 		</button>
 	</div>
 
-	<div class="grid gap-1">
+	<div class="grid">
 		{#each reverse_clips as clip, i (clip.id)}
 			<button
 				animate:flip={{ duration: 200 }}
@@ -128,27 +130,56 @@
 				ondragend={handleDragEnd}
 				onkeydown={(e) => handleKeydown(e, i)}
 				aria-grabbed={draggingIndex === i}
-				class="group flex cursor-grab items-center gap-3 rounded-lg border-2
-                border-blue-200 bg-blue-400 px-4 py-1 text-slate-100 transition-[background-color,border-color,transform,opacity,box-shadow]
-                duration-150
-                select-none
-                hover:border-blue-800 hover:bg-blue-400/70
-                focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400
-                active:cursor-grabbing
-                {isDragging ? 'shadow-lg' : ''}
-                {draggingIndex === i ? 'scale-[0.98] border-dashed border-sky-500 opacity-40' : ''}
-                {overIndex === i ? 'border-sky-400 bg-white  text-black shadow-md' : ''}"
+				class="py-0.5"
 			>
 				<span
-					aria-hidden="true"
-					class="text-sm tracking-[-2px] text-slate-600 transition-colors select-none
+					class="group flex cursor-grab items-center gap-3
+                rounded-lg border-2 border-gray-200 bg-gray-200 px-4
+                py-2 text-slate-800
+                transition-all duration-150
+                select-none hover:border-blue-800
+                hover:bg-blue-200/70 focus:outline-none focus-visible:ring-2
+                focus-visible:ring-sky-400 active:cursor-grabbing
+
+               	{typeof overIndex !== 'number' ||
+					typeof draggingIndex !== 'number' ||
+					overIndex === draggingIndex
+						? ''
+						: overIndex < draggingIndex
+							? overIndex > i
+								? '-translate-y-1 duration-75 ease-in'
+								: ' translate-y-1 duration-75 ease-in'
+							: overIndex > i - 1
+								? '-translate-y-1 duration-75 ease-in'
+								: 'translate-y-1 duration-75 ease-in'}
+                {draggingIndex === i
+						? 'my-2 -rotate-2 border-dashed border-sky-500 opacity-40'
+						: ''}
+					{typeof overIndex !== 'number' || typeof draggingIndex !== 'number' || overIndex === draggingIndex
+						? ''
+						: overIndex > draggingIndex
+							? overIndex == i
+								? 'border-b-blue-700'
+								: overIndex == i - 1
+									? 'border-t-blue-700'
+									: ''
+							: overIndex == i
+								? 'border-t-blue-700'
+								: overIndex == i + 1
+									? 'border-b-blue-700'
+									: ''}"
+				>
+					<span
+						aria-hidden="true"
+						class="text-sm tracking-[-2px] text-slate-600 transition-colors select-none
                group-hover:text-slate-900 hover:font-bold"
-				>
-					⋮ ⋮ ⋮
+					>
+						⋮ ⋮ ⋮
+					</span>
+					<span class="flex-1 text-start text-sm capitalize">
+						{clip.type} {clip.type === 'rect' ? ` - ${clip.attr.fill}` : ''}</span
+					>
 				</span>
-				<span class="flex-1 text-start text-sm">
-					{clip.type === 'rect' ? clip.attr.fill : clip.type}</span
-				>
 			</button>
 		{/each}
 	</div>

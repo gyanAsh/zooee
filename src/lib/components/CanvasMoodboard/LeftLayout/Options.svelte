@@ -8,40 +8,49 @@
 		<button
 			aria-label="layers"
 			aria-pressed={left_layout_state.modal === 'layers'}
-			class=" group group relative flex size-15 cursor-pointer flex-col items-center justify-center gap-0.5
-		  text-gray-800/70 hover:text-gray-800 aria-pressed:text-gray-800"
+			class=" group relative flex size-15 cursor-pointer flex-col items-center justify-center gap-0.5
+		    font-medium text-gray-800 duration-75 ease-in hover:font-bold aria-pressed:font-bold aria-pressed:text-blue-800"
 			onclick={() => (left_layout_state.modal = 'layers')}
 		>
-			<svg
-				xmlns="http://www.w3.org/2000/svg"
-				width="20"
-				height="20"
-				viewBox="0 0 24 24"
-				fill="none"
-				stroke="currentColor"
-				stroke-width="2"
-				stroke-linecap="round"
-				stroke-linejoin="round"
-				class="lucide lucide-layers preview-icon"
-				><path
-					d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"
-				/><path
-					d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"
-				/><path
-					d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"
-				/></svg
+			<div
+				class="grid rounded-lg p-1.5 duration-75 ease-in group-hover:bg-blue-100 group-hover:text-blue-800 aria-pressed:bg-blue-700 aria-pressed:text-gray-100"
+				aria-pressed={left_layout_state.modal === 'layers'}
 			>
-			<h2 class="text-xs font-medium group-hover:font-bold">Layers</h2>
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					width="20"
+					height="20"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					class="lucide lucide-layers preview-icon"
+					><path
+						d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"
+					/><path
+						d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"
+					/><path
+						d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"
+					/></svg
+				>
+			</div>
+
+			<h2 class="text-xs">Layers</h2>
 		</button>
 
 		<button
 			aria-label="elements"
 			aria-pressed={left_layout_state.modal === 'elements'}
-			class=" group group relative flex size-15 cursor-pointer flex-col items-center justify-center gap-0.5
-		  text-gray-800/70 hover:text-gray-800 aria-pressed:text-gray-800"
+			class=" group relative flex size-15 cursor-pointer flex-col items-center justify-center gap-0.5
+            font-medium text-gray-800 duration-75 ease-in hover:font-bold aria-pressed:font-bold aria-pressed:text-blue-800"
 			onclick={() => (left_layout_state.modal = 'elements')}
 		>
-			<div class="grid grid-cols-2">
+			<div
+				class="grid grid-cols-2 rounded-lg p-1.5 duration-75 ease-in group-hover:bg-blue-100 group-hover:text-blue-800 aria-pressed:bg-blue-700 aria-pressed:text-gray-100"
+				aria-pressed={left_layout_state.modal === 'elements'}
+			>
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
 					width="10"
@@ -97,41 +106,46 @@
 				>
 			</div>
 
-			<h2 class="text-xs font-medium group-hover:font-bold">Elements</h2>
+			<h2 class="text-xs">Elements</h2>
 		</button>
 		<button
 			aria-label="template"
 			aria-pressed={left_layout_state.modal === 'template'}
-			class=" group group relative flex size-15 cursor-pointer flex-col items-center justify-center gap-0.5
-		   text-gray-800/70 hover:text-gray-800 aria-pressed:text-gray-800"
+			class=" group relative flex size-15 cursor-pointer flex-col items-center justify-center gap-0.5
+		    font-medium text-gray-800 duration-75 ease-in hover:font-bold aria-pressed:font-bold aria-pressed:text-blue-800"
 			onclick={() => (left_layout_state.modal = 'template')}
 		>
-			<svg
-				xmlns="http://www.w3.org/2000/svg"
-				width="20"
-				height="20"
-				viewBox="0 0 24 24"
-				fill="none"
-				stroke="currentColor"
-				stroke-width="2"
-				stroke-linecap="round"
-				stroke-linejoin="round"
-				class="lucide lucide-layout-dashboard preview-icon"
-				><rect width="7" height="9" x="3" y="3" rx="1" /><rect
-					width="7"
-					height="5"
-					x="14"
-					y="3"
-					rx="1"
-				/><rect width="7" height="9" x="14" y="12" rx="1" /><rect
-					width="7"
-					height="5"
-					x="3"
-					y="16"
-					rx="1"
-				/></svg
+			<div
+				class="grid rounded-lg p-1.5 duration-75 ease-in group-hover:bg-blue-100 group-hover:text-blue-800 aria-pressed:bg-blue-700 aria-pressed:text-gray-100"
+				aria-pressed={left_layout_state.modal === 'template'}
 			>
-			<h2 class="text-xs font-medium group-hover:font-bold">Templates</h2>
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					width="20"
+					height="20"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					class="lucide lucide-layout-dashboard preview-icon"
+					><rect width="7" height="9" x="3" y="3" rx="1" /><rect
+						width="7"
+						height="5"
+						x="14"
+						y="3"
+						rx="1"
+					/><rect width="7" height="9" x="14" y="12" rx="1" /><rect
+						width="7"
+						height="5"
+						x="3"
+						y="16"
+						rx="1"
+					/></svg
+				>
+			</div>
+			<h2 class="text-xs">Templates</h2>
 		</button>
 	</div>
 	{#if left_layout_state.modal === 'layers'}

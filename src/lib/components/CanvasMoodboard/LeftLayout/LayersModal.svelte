@@ -85,7 +85,7 @@
 <!-- Component flies in from the left (-x) and out to the right (+x) -->
 
 <section
-	class="absolute top-0 left-17 flex h-full w-65 flex-col gap-2 border-r p-2 {isDragging
+	class="absolute top-0 left-20 flex h-full w-65 flex-col gap-2 border-r p-2 {isDragging
 		? 'bg-gray-50'
 		: 'bg-white'}"
 	in:fly={{ x: -10, duration: 130, easing: cubicOut }}

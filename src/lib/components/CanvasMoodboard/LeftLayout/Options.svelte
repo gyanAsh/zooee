@@ -7,7 +7,9 @@
 	<div class="py-2">
 		<button
 			aria-label="layers"
-			class=" group group relative flex size-15 cursor-pointer flex-col items-center justify-center gap-0.5 text-gray-800/70 hover:text-gray-800"
+			aria-pressed={left_layout_state.modal === 'layers'}
+			class=" group group relative flex size-15 cursor-pointer flex-col items-center justify-center gap-0.5
+		  text-gray-800/70 hover:text-gray-800 aria-pressed:text-gray-800"
 			onclick={() => (left_layout_state.modal = 'layers')}
 		>
 			<svg
@@ -34,7 +36,9 @@
 
 		<button
 			aria-label="elements"
-			class=" group group relative flex size-15 cursor-pointer flex-col items-center justify-center gap-0.5 text-gray-800/70 hover:text-gray-800"
+			aria-pressed={left_layout_state.modal === 'elements'}
+			class=" group group relative flex size-15 cursor-pointer flex-col items-center justify-center gap-0.5
+		  text-gray-800/70 hover:text-gray-800 aria-pressed:text-gray-800"
 			onclick={() => (left_layout_state.modal = 'elements')}
 		>
 			<div class="grid grid-cols-2">
@@ -97,7 +101,9 @@
 		</button>
 		<button
 			aria-label="template"
-			class=" group group relative flex size-15 cursor-pointer flex-col items-center justify-center gap-0.5 text-gray-800/70 hover:text-gray-800"
+			aria-pressed={left_layout_state.modal === 'template'}
+			class=" group group relative flex size-15 cursor-pointer flex-col items-center justify-center gap-0.5
+		   text-gray-800/70 hover:text-gray-800 aria-pressed:text-gray-800"
 			onclick={() => (left_layout_state.modal = 'template')}
 		>
 			<svg

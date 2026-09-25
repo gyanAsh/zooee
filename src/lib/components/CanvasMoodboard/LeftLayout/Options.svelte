@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { left_layout_state } from '$lib/client-state/moodboard/leftlayout/index.svelte.js';
+	import ElementModal from './ElementModal.svelte';
 	import LayersModal from './LayersModal.svelte';
+	import TemplateModal from './TemplateModal.svelte';
 </script>
 
 <section class="relative h-full bg-white">
@@ -165,5 +167,9 @@
 	</div>
 	{#if left_layout_state.modal === 'layers'}
 		<LayersModal />
+	{:else if left_layout_state.modal === 'elements'}
+		<ElementModal />
+	{:else if left_layout_state.modal === 'template'}
+		<TemplateModal />
 	{/if}
 </section>

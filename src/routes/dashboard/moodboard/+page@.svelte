@@ -6,6 +6,7 @@
 	import { Stage, Layer } from 'svelte-konva';
 	import { tick, type SvelteComponent } from 'svelte';
 	import Image from '$lib/components/CanvasMoodboard/Image.svelte';
+	import Text from '$lib/components/CanvasMoodboard/Text.svelte';
 
 	let container: HTMLDivElement;
 	let layerComp: SvelteComponent & { node: Konva.Layer };
@@ -46,6 +47,8 @@
 						<Rectange id={clip.id} bind:rect={clip.attr} />
 					{:else if clip.type === 'img'}
 						<Image id={clip.id} bind:img={clip.attr} />
+					{:else if clip.type === 'text'}
+						<Text id={clip.id} bind:txt={clip.attr} />
 					{/if}
 				{/each}
 			</Layer>

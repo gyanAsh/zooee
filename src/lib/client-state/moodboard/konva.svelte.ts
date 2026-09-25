@@ -2,11 +2,12 @@ import { PersistedState } from 'runed';
 import type { RectClip } from './rectangle.svelte.ts';
 import type { CircleClip } from './circle.svelte.ts';
 import type { ImageClip } from './image.svelte.ts';
+import type { TextClip } from './text.svelte.ts';
 import { asset } from '$app/paths';
 
 export const stage_state = new PersistedState('stage', { width: 0, height: 0 });
 
-export type ClipItem = ImageClip | RectClip | CircleClip;
+export type ClipItem = TextClip | ImageClip | RectClip | CircleClip;
 //
 export const clips = new PersistedState<ClipItem[]>('clips', [
 	{
@@ -22,6 +23,23 @@ export const clips = new PersistedState<ClipItem[]>('clips', [
 			fill: 'transparent',
 			crossOrigin: 'Anonymous',
 			rotation: 0
+		}
+	},
+	{
+		type: 'text',
+		id: 'kh6f4',
+		attr: {
+			width: 400,
+			height: 200,
+			awayFromTop: 100,
+			awayFromSide: 100,
+			position: 'center',
+			fill: 'black',
+			rotation: 0,
+			text: 'Defalut Text',
+			fontSize: 24,
+			fontFamily: 'Cal Sans',
+			align: 'center'
 		}
 	},
 	{

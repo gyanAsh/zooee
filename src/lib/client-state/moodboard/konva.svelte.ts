@@ -8,7 +8,7 @@ import { asset } from '$app/paths';
 export const stage_state = new PersistedState('stage', { width: 0, height: 0 });
 
 export type ClipItem = TextClip | ImageClip | RectClip | CircleClip;
-//
+
 export const clips = new PersistedState<ClipItem[]>('clips', [
 	{
 		type: 'img',
@@ -35,11 +35,11 @@ export const clips = new PersistedState<ClipItem[]>('clips', [
 			awayFromSide: 100,
 			position: 'center',
 			fill: 'black',
-			rotation: 0,
+			rotation: 10,
 			text: 'Defalut Text',
 			fontSize: 24,
 			fontFamily: 'Cal Sans',
-			align: 'center'
+			align: 'left'
 		}
 	},
 	{
@@ -69,7 +69,7 @@ export const clips = new PersistedState<ClipItem[]>('clips', [
 			url: 'https://goodies.icons8.com/web/common/header/logo/logo-icons8.svg',
 			fill: 'transparent',
 			crossOrigin: 'Anonymous',
-			rotation: 0
+			rotation: -10
 		}
 	},
 	{

@@ -39,8 +39,11 @@
 			txt.position === 'left'
 				? e.target.x()
 				: txt.position === 'right'
-					? stage_state.current.width - txt.width - e.target.x()
-					: stage_state.current.width / 2 - e.target.x() - txt.width / 2;
+					? stage_state.current.width - e.target.width() - e.target.x()
+					: stage_state.current.width / 2 - e.target.x() - e.target.width() / 2;
 		txt.awayFromTop = e.target.y();
 	}}
 />
+
+<!-- const visualWidth = node.width() * node.scaleX();
+const visualHeight = node.height() * node.scaleY(); -->

@@ -30,13 +30,15 @@
 	draggable
 	fill={rect.fill}
 	rotation={rect.rotation}
+	onpointerclick={(e: KonvaEventObject<DragEvent>) =>
+		console.log({ 'this is pointer-click': e.target.id() })}
 	ondragend={(e: KonvaEventObject<DragEvent>) => {
 		rect.awayFromSide =
 			rect.position === 'left'
 				? e.target.x()
 				: rect.position === 'right'
-					? stage_state.current.width - rect.width - e.target.x()
-					: stage_state.current.width / 2 - e.target.x() - rect.width / 2;
+					? stage_state.current.width - e.target.width() - e.target.x()
+					: stage_state.current.width / 2 - e.target.x() - e.target.width() / 2;
 		rect.awayFromTop = e.target.y();
 	}}
 />

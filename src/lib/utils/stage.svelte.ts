@@ -61,6 +61,7 @@ export const handleMouseDown = ({
 }) => {
 	if (e.target !== e.target.getStage()) return;
 	const pos = e.target.getStage().getRelativePointerPosition(); // these are relative, not .getPointerPosition() // make sure to keep absolute & local position in mind.
+	//you will notice the differnece when scale is applied to parent(i.e. stage) or groups are added
 	if (!pos) return;
 	setIsSelecting(true);
 	setSelectionRect({

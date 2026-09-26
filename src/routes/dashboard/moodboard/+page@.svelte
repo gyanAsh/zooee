@@ -24,9 +24,8 @@
 	}
 	let container: HTMLDivElement;
 	let layerComp: SvelteComponent & { node: Konva.Layer };
-	let transformer: ReturnType<typeof Transformer> | undefined;
+	let transformerComp: SvelteComponent & { node: Konva.Transformer };
 
-	let clips_items = $derived(clips.current);
 	const selection_rect_id = 'selection_rect_id';
 
 	const onClick = (e: KonvaEventObject<DragEvent>) =>
@@ -58,7 +57,7 @@
 			setSelectionRect: (rect) => st.setSelectionRect(rect),
 			layer: layerComp?.node,
 			selectionRectId: selection_rect_id,
-			itemsIds: clips_items.map((c) => c.id)
+			itemsIds: clips.current.map((c) => c.id)
 		});
 
 	$effect(() => {
@@ -73,7 +72,7 @@
 	$effect(() => {
 		const layer = layerComp?.node;
 		if (!layer) return;
-		const order = clips_items.map((c) => c.id);
+		const order = clips.current.map((c) => c.id);
 
 		tick().then(() => {
 			for (const id of order) {
@@ -83,6 +82,19 @@
 			}
 			layer.batchDraw();
 		});
+	});
+
+	$effect(() => {
+		if (!transformerComp || !layerComp) return;
+		const layer = layerComp?.node;
+		const transformer = transformerComp.node;
+		let nodes: Konva.Node[] = [];
+		for (const id of st.selectedIds) {
+			const node = layer.findOne<Konva.Node>(`#${id}`);
+			if (node && node.getParent() === layer) nodes.push(node);
+			else console.error(`not found :${id}, node : ${node} , nodeparent : ${node?.getParent()}`);
+		}
+		transformer.nodes(nodes);
 	});
 </script>
 
@@ -101,7 +113,7 @@
 			ontouchend={onMouseUp}
 		>
 			<Layer bind:this={layerComp}>
-				{#each clips_items as clip (clip.id)}
+				{#each clips.current as clip (clip.id)}
 					{#if clip.type === 'rect'}
 						<Rectange id={clip.id} bind:rect={clip.attr} />
 					{:else if clip.type === 'img'}
@@ -111,7 +123,7 @@
 					{/if}
 				{/each}
 				<Transformer
-					bind:this={transformer}
+					bind:this={transformerComp}
 					boundboxfunc={(oldBox: Box, newBox: Box) => {
 						//Limit resize
 						if (newBox.width < 5 || newBox.height < 5) return oldBox;

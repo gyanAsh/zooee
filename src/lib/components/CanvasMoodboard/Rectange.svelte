@@ -19,6 +19,23 @@
 				: stage_state.current.width / 2 - rect.awayFromSide - rect.width / 2
 	);
 	let y = $derived(rect.awayFromTop);
+
+	const onTransformEnd = (e: KonvaEventObject<DragEvent>) => {
+		const node = e.target;
+
+		const scaleX = node.scaleX();
+		const scaleY = node.scaleY();
+
+		// Reset scale
+		node.scaleX(1);
+		node.scaleY(1);
+
+		rect.awayFromSide = node.x();
+		rect.awayFromTop = node.y();
+		rect.width = Math.max(5, node.width() * scaleX);
+		rect.height = Math.max(5, node.height() * scaleY);
+		rect.rotation = node.rotation();
+	};
 </script>
 
 <Rect
@@ -30,8 +47,6 @@
 	draggable
 	fill={rect.fill}
 	rotation={rect.rotation}
-	onpointerclick={(e: KonvaEventObject<DragEvent>) =>
-		console.log({ 'this is pointer-click': e.target.id() })}
 	ondragend={(e: KonvaEventObject<DragEvent>) => {
 		rect.awayFromSide =
 			rect.position === 'left'
@@ -41,4 +56,5 @@
 					: stage_state.current.width / 2 - e.target.x() - e.target.width() / 2;
 		rect.awayFromTop = e.target.y();
 	}}
+	ontransformend={onTransformEnd}
 />

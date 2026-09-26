@@ -69,32 +69,39 @@
 		ro.observe(container);
 		return () => ro.disconnect();
 	});
+
 	$effect(() => {
 		const layer = layerComp?.node;
-		if (!layer) return;
+		const transformer = transformerComp?.node;
+		if (!layer || !transformer) return;
+
+		// Snapshot reactive sources *synchronously* so they're tracked.
 		const order = clips.current.map((c) => c.id);
+		const selectedIds = st.selectedIds;
 
 		tick().then(() => {
+			// eslint-disable-next-line svelte/prefer-svelte-reactivity
+			const cache = new Map<string, Konva.Node | undefined>();
+			const lookup = (id: string) => {
+				if (!cache.has(id)) cache.set(id, layer.findOne<Konva.Node>(`#${id}`));
+				return cache.get(id);
+			};
+
 			for (const id of order) {
-				const node = layer.findOne<Konva.Node>(`#${id}`);
-				if (node && node.getParent() === layer) node.moveToTop();
-				else console.error(`not found :${id}, node : ${node} , nodeparent : ${node?.getParent()}`);
+				const node = lookup(id);
+				if (node?.getParent() === layer) node.moveToTop();
 			}
+
+			const nodes: Konva.Node[] = [];
+			for (const id of selectedIds) {
+				const node = lookup(id);
+				if (node?.getParent() === layer) nodes.push(node);
+			}
+
+			transformer.nodes(nodes);
+			if (nodes.length > 0) transformer.moveToTop();
 			layer.batchDraw();
 		});
-	});
-
-	$effect(() => {
-		if (!transformerComp || !layerComp) return;
-		const layer = layerComp?.node;
-		const transformer = transformerComp.node;
-		let nodes: Konva.Node[] = [];
-		for (const id of st.selectedIds) {
-			const node = layer.findOne<Konva.Node>(`#${id}`);
-			if (node && node.getParent() === layer) nodes.push(node);
-			else console.error(`not found :${id}, node : ${node} , nodeparent : ${node?.getParent()}`);
-		}
-		transformer.nodes(nodes);
 	});
 </script>
 
@@ -122,14 +129,7 @@
 						<Text id={clip.id} bind:txt={clip.attr} />
 					{/if}
 				{/each}
-				<Transformer
-					bind:this={transformerComp}
-					boundboxfunc={(oldBox: Box, newBox: Box) => {
-						//Limit resize
-						if (newBox.width < 5 || newBox.height < 5) return oldBox;
-						return newBox;
-					}}
-				/>
+
 				{#if st.selectionRect.visible == true}
 					<Rect
 						id={selection_rect_id}
@@ -140,6 +140,21 @@
 						fill="rgba(0,0,255,0.5)"
 					/>
 				{/if}
+				<Transformer
+					bind:this={transformerComp}
+					boundboxfunc={(oldBox: Box, newBox: Box) => {
+						//Limit resize
+						if (newBox.width < 5 || newBox.height < 5) return oldBox;
+						return newBox;
+					}}
+					borderStroke="#000"
+					borderStrokeWidth={3}
+					anchorFill="#fff"
+					anchorStroke="#000"
+					anchorStrokeWidth={2}
+					anchorSize={20}
+					anchorCornerRadius={50}
+				/>
 			</Layer>
 		</Stage>
 	</div>

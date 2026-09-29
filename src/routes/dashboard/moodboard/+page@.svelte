@@ -71,6 +71,7 @@
 	});
 
 	$effect(() => {
+		console.count('page ele');
 		const layer = layerComp?.node;
 		const transformer = transformerComp?.node;
 		if (!layer || !transformer) return;

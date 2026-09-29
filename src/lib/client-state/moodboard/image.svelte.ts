@@ -9,6 +9,7 @@ export interface ImageDimensions {
 	awayFromTop: number;
 	awayFromSide: number;
 	position: 'left' | 'right' | 'center';
+	newImage: boolean;
 }
 export interface ImageClip {
 	type: 'img';

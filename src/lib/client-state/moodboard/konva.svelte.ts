@@ -22,7 +22,8 @@ export const clips = new PersistedState<ClipItem[]>('clips', [
 			url: 'https://pub-39b854a65f6e4e6d996671b5e24bd788.r2.dev/Folder.svg',
 			fill: 'transparent',
 			crossOrigin: 'Anonymous',
-			rotation: 0
+			rotation: 0,
+			newImage: true
 		}
 	},
 	{
@@ -54,7 +55,8 @@ export const clips = new PersistedState<ClipItem[]>('clips', [
 			url: asset('/folder.svg'),
 			fill: 'transparent',
 			crossOrigin: null,
-			rotation: 0
+			rotation: 0,
+			newImage: true
 		}
 	},
 	{
@@ -69,7 +71,8 @@ export const clips = new PersistedState<ClipItem[]>('clips', [
 			url: 'https://goodies.icons8.com/web/common/header/logo/logo-icons8.svg',
 			fill: 'transparent',
 			crossOrigin: 'Anonymous',
-			rotation: -10
+			rotation: -10,
+			newImage: true
 		}
 	},
 	{

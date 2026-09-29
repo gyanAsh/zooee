@@ -25,15 +25,22 @@
 
 		const scaleX = node.scaleX();
 		const scaleY = node.scaleY();
+		const newWidth = Math.max(5, node.width() * scaleX);
+		const newHeight = Math.max(5, node.height() * scaleY);
 
 		// Reset scale
 		node.scaleX(1);
 		node.scaleY(1);
 
-		rect.awayFromSide = node.x();
+		rect.awayFromSide =
+			rect.position === 'left'
+				? node.x()
+				: rect.position === 'right'
+					? stage_state.current.width - newWidth - node.x()
+					: stage_state.current.width / 2 - node.x() - newWidth / 2;
 		rect.awayFromTop = node.y();
-		rect.width = Math.max(5, node.width() * scaleX);
-		rect.height = Math.max(5, node.height() * scaleY);
+		rect.width = newWidth;
+		rect.height = newHeight;
 		rect.rotation = node.rotation();
 	};
 </script>

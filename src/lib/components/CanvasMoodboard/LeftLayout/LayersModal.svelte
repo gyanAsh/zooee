@@ -18,11 +18,10 @@
 
 	function handleDragStart(index: number, e: DragEvent) {
 		draggingIndex = index;
-		if (e.dataTransfer) {
-			e.dataTransfer.effectAllowed = 'move';
-			// Required for Firefox
-			e.dataTransfer.setData('text/plain', String(index));
-		}
+		if (!e.dataTransfer) return;
+		e.dataTransfer.effectAllowed = 'move';
+		// Required for Firefox
+		e.dataTransfer.setData('text/plain', String(index));
 	}
 
 	function handleDragOver(index: number, e: DragEvent) {
@@ -134,27 +133,27 @@
 			>
 				<span
 					class="group flex cursor-grab items-center gap-3
-                rounded-lg border-2 border-gray-200 bg-gray-200 px-4
-                py-2 text-slate-800
-                transition-all duration-150
-                select-none hover:border-blue-800
-                hover:bg-blue-200/70 focus:outline-none focus-visible:ring-2
-                focus-visible:ring-sky-400 active:cursor-grabbing
+					rounded-lg border-2 border-gray-200 bg-gray-200 px-4
+					py-2 text-slate-800
+					transition-all duration-150
+					select-none hover:border-blue-800
+					hover:bg-blue-200/70 focus:outline-none focus-visible:ring-2
+					focus-visible:ring-sky-400 active:cursor-grabbing
 
-               	{typeof overIndex !== 'number' ||
-					typeof draggingIndex !== 'number' ||
-					overIndex === draggingIndex
+					{typeof overIndex !== 'number' || typeof draggingIndex !== 'number' || overIndex === draggingIndex
 						? ''
 						: overIndex < draggingIndex
 							? overIndex > i
 								? '-translate-y-1 duration-75 ease-in'
-								: ' translate-y-1 duration-75 ease-in'
+								: 'translate-y-1 duration-75 ease-in'
 							: overIndex > i - 1
 								? '-translate-y-1 duration-75 ease-in'
 								: 'translate-y-1 duration-75 ease-in'}
-                {draggingIndex === i
-						? 'my-2 -rotate-2 border-dashed border-sky-500 opacity-40'
+
+					{draggingIndex === i
+						? 'my-2 scale-[0.98] -rotate-2 border-dashed border-sky-500 opacity-40 shadow-lg'
 						: ''}
+
 					{typeof overIndex !== 'number' || typeof draggingIndex !== 'number' || overIndex === draggingIndex
 						? ''
 						: overIndex > draggingIndex

@@ -4,13 +4,14 @@
 	import { stage_state } from '$lib/client-state/moodboard/konva.svelte.js';
 	import type { ImageDimensions } from '$lib/client-state/moodboard/image.svelte.js';
 	import { useImage } from '$lib/utils/image.svelte.js';
+	import { untrack } from 'svelte';
 
 	interface ComponentProps {
 		img: ImageDimensions;
 		id: string;
 	}
 
-	const { img = $bindable(), id }: ComponentProps = $props();
+	let { img = $bindable(), id }: ComponentProps = $props();
 
 	let x = $derived(
 		img.position === 'left'
@@ -22,8 +23,43 @@
 	let y = $derived(img.awayFromTop);
 
 	const image = useImage(img.url, img.crossOrigin);
-	let img_width = $derived(image.status === 'loaded' ? image.size.width : img.width);
-	let img_height = $derived(image.status === 'loaded' ? image.size.height : img.height);
+
+	$effect(() => {
+		if (image.status !== 'loaded') return;
+		const { width, height } = image.size;
+
+		untrack(() => {
+			if (img.newImage == true) {
+				img.width = width;
+				img.height = height;
+				img.newImage = false;
+			}
+		});
+	});
+
+	const onTransformEnd = (e: KonvaEventObject<DragEvent>) => {
+		const node = e.target;
+
+		const scaleX = node.scaleX();
+		const scaleY = node.scaleY();
+		const newWidth = Math.max(5, node.width() * scaleX);
+		const newHeight = Math.max(5, node.height() * scaleY);
+
+		// Reset scale
+		node.scaleX(1);
+		node.scaleY(1);
+
+		img.awayFromSide =
+			img.position === 'left'
+				? node.x()
+				: img.position === 'right'
+					? stage_state.current.width - newWidth - node.x()
+					: stage_state.current.width / 2 - node.x() - newWidth / 2;
+		img.awayFromTop = node.y();
+		img.width = newWidth;
+		img.height = newHeight;
+		img.rotation = node.rotation();
+	};
 </script>
 
 <Image
@@ -31,8 +67,8 @@
 	{y}
 	{id}
 	image={image.current}
-	width={img_width}
-	height={img_height}
+	width={img.width}
+	height={img.height}
 	draggable
 	fill={img.fill}
 	rotation={img.rotation}
@@ -45,4 +81,5 @@
 					: stage_state.current.width / 2 - e.target.x() - img.width / 2;
 		img.awayFromTop = e.target.y();
 	}}
+	ontransformend={onTransformEnd}
 />

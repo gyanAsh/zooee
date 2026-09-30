@@ -2,12 +2,13 @@ import { PersistedState } from 'runed';
 import type { RectClip } from './rectangle.svelte.ts';
 import type { CircleClip } from './circle.svelte.ts';
 import type { ImageClip } from './image.svelte.ts';
+import type { TextClip } from './text.svelte.ts';
 import { asset } from '$app/paths';
 
 export const stage_state = new PersistedState('stage', { width: 0, height: 0 });
 
-export type ClipItem = ImageClip | RectClip | CircleClip;
-//
+export type ClipItem = TextClip | ImageClip | RectClip | CircleClip;
+
 export const clips = new PersistedState<ClipItem[]>('clips', [
 	{
 		type: 'img',
@@ -21,7 +22,25 @@ export const clips = new PersistedState<ClipItem[]>('clips', [
 			url: 'https://pub-39b854a65f6e4e6d996671b5e24bd788.r2.dev/Folder.svg',
 			fill: 'transparent',
 			crossOrigin: 'Anonymous',
-			rotation: 0
+			rotation: 0,
+			newImage: true
+		}
+	},
+	{
+		type: 'text',
+		id: 'kh6f4',
+		attr: {
+			width: 400,
+			height: 200,
+			awayFromTop: 100,
+			awayFromSide: 100,
+			position: 'center',
+			fill: 'black',
+			rotation: 10,
+			text: 'Defalut Text',
+			fontSize: 24,
+			fontFamily: 'Cal Sans',
+			align: 'left'
 		}
 	},
 	{
@@ -36,7 +55,8 @@ export const clips = new PersistedState<ClipItem[]>('clips', [
 			url: asset('/folder.svg'),
 			fill: 'transparent',
 			crossOrigin: null,
-			rotation: 0
+			rotation: 0,
+			newImage: true
 		}
 	},
 	{
@@ -51,7 +71,8 @@ export const clips = new PersistedState<ClipItem[]>('clips', [
 			url: 'https://goodies.icons8.com/web/common/header/logo/logo-icons8.svg',
 			fill: 'transparent',
 			crossOrigin: 'Anonymous',
-			rotation: 0
+			rotation: -10,
+			newImage: true
 		}
 	},
 	{

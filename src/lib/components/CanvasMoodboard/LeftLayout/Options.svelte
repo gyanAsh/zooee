@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { left_layout_state } from '$lib/client-state/moodboard/leftlayout/index.svelte.js';
+	import ElementModal from './ElementModal.svelte';
 	import LayersModal from './LayersModal.svelte';
+	import TemplateModal from './TemplateModal.svelte';
 </script>
 
 <section class="relative h-full bg-white">
@@ -17,7 +19,7 @@
 			onclick={() => (left_layout_state.modal = 'layers')}
 		>
 			<div
-				class="grid rounded-lg bg-blue-100 p-1.5 text-gray-800 duration-75 ease-in group-hover:bg-blue-200 group-hover:text-blue-800 aria-pressed:bg-blue-700 aria-pressed:text-gray-100"
+				class="grid rounded-lg p-1.5 text-gray-800 duration-75 ease-in group-hover:text-blue-800 aria-pressed:bg-blue-700 aria-pressed:text-gray-100"
 				aria-pressed={left_layout_state.modal === 'layers'}
 			>
 				<svg
@@ -56,7 +58,7 @@
 			onclick={() => (left_layout_state.modal = 'elements')}
 		>
 			<div
-				class="grid rounded-lg bg-blue-100 p-1.5 text-gray-800 duration-75 ease-in group-hover:bg-blue-200 group-hover:text-blue-800 aria-pressed:bg-blue-700 aria-pressed:text-gray-100"
+				class="grid rounded-lg p-1.5 text-gray-800 duration-75 ease-in group-hover:text-blue-800 aria-pressed:bg-blue-700 aria-pressed:text-gray-100"
 				aria-pressed={left_layout_state.modal === 'elements'}
 			>
 				<div class="relative size-5">
@@ -131,7 +133,7 @@
 			onclick={() => (left_layout_state.modal = 'template')}
 		>
 			<div
-				class="grid rounded-lg bg-blue-100 p-1.5 text-gray-800 duration-75 ease-in group-hover:bg-blue-200 group-hover:text-blue-800 aria-pressed:bg-blue-700 aria-pressed:text-gray-100"
+				class="grid rounded-lg p-1.5 text-gray-800 duration-75 ease-in group-hover:text-blue-800 aria-pressed:bg-blue-700 aria-pressed:text-gray-100"
 				aria-pressed={left_layout_state.modal === 'template'}
 			>
 				<svg
@@ -165,5 +167,9 @@
 	</div>
 	{#if left_layout_state.modal === 'layers'}
 		<LayersModal />
+	{:else if left_layout_state.modal === 'elements'}
+		<ElementModal />
+	{:else if left_layout_state.modal === 'template'}
+		<TemplateModal />
 	{/if}
 </section>

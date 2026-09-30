@@ -25,7 +25,6 @@
 	const image = useImage(img.url, img.crossOrigin);
 
 	$effect(() => {
-		console.count('in image');
 		if (image.status !== 'loaded') return;
 		const { width, height } = image.size;
 

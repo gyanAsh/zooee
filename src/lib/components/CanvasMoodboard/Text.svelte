@@ -19,6 +19,30 @@
 				: stage_state.current.width / 2 - txt.awayFromSide - txt.width / 2
 	);
 	let y = $derived(txt.awayFromTop);
+
+	const onTransformEnd = (e: KonvaEventObject<DragEvent>) => {
+		const node = e.target;
+
+		const scaleX = node.scaleX();
+		const scaleY = node.scaleY();
+		const newWidth = Math.max(5, node.width() * scaleX);
+		const newHeight = Math.max(5, node.height() * scaleY);
+
+		// Reset scale
+		node.scaleX(1);
+		node.scaleY(1);
+
+		txt.awayFromSide =
+			txt.position === 'left'
+				? node.x()
+				: txt.position === 'right'
+					? stage_state.current.width - newWidth - node.x()
+					: stage_state.current.width / 2 - node.x() - newWidth / 2;
+		txt.awayFromTop = node.y();
+		txt.width = newWidth;
+		txt.height = newHeight;
+		txt.rotation = node.rotation();
+	};
 </script>
 
 <Text
@@ -43,6 +67,7 @@
 					: stage_state.current.width / 2 - e.target.x() - e.target.width() / 2;
 		txt.awayFromTop = e.target.y();
 	}}
+	ontransformend={onTransformEnd}
 />
 
 <!-- const visualWidth = node.width() * node.scaleX();

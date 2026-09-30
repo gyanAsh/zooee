@@ -23,12 +23,12 @@ class StageStore {
 	}
 
 	setSelectedIds(ids: string[]) {
-		console.log({ selectedIds: ids });
+		// console.log({ selectedIds: ids });
 		this.selectedIds = ids;
 	}
 
 	setIsSelecting(state: boolean) {
-		console.log({ isSelecting: state });
+		// console.log({ isSelecting: state });
 		this.isSelecting = state;
 	}
 }

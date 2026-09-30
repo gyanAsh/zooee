@@ -119,17 +119,13 @@ export const handleMouseUp = ({
 	setIsSelecting(false);
 
 	// Update visibility in timeout, so we can check it in click event
-	// setTimeout(() => {
-	//   setSelectionRect({
-	//     ...selectionRect,
-	//     visible: false,
-	//   });
-	// });
-
-	setSelectionRect({
-		...selectionRect,
-		visible: false
+	setTimeout(() => {
+		setSelectionRect({
+			...selectionRect,
+			visible: false
+		});
 	});
+
 	if (!layer) {
 		console.error('Layer not found!');
 		return;

@@ -12,7 +12,8 @@
 		handleMouseDown,
 		handleMouseMove,
 		handleMouseUp,
-		handleStageClick
+		handleStageClick,
+		transform_border_color
 	} from '$lib/utils/stage.svelte';
 	import type { KonvaEventObject } from 'konva/lib/Node';
 	interface Box {
@@ -142,20 +143,48 @@
 				{/if}
 				<Transformer
 					bind:this={transformerComp}
-					boundboxfunc={(oldBox: Box, newBox: Box) => {
+					boundBoxFunc={(oldBox: Box, newBox: Box) => {
 						//Limit resize
 						if (newBox.width < 5 || newBox.height < 5) return oldBox;
 						return newBox;
 					}}
-					borderStroke="#000"
-					borderStrokeWidth={3}
-					anchorFill="#fff"
-					anchorStroke="#000"
-					anchorStrokeWidth={2}
-					anchorSize={20}
-					anchorCornerRadius={50}
+					enabledAnchors={[
+						'top-left',
+						'top-right',
+						'bottom-left',
+						'bottom-right',
+						'middle-right',
+						'middle-left'
+					]}
+					borderStroke={transform_border_color}
+					borderStrokeWidth={1.5}
+					anchorSize={12}
+					anchorStroke={transform_border_color}
+					anchorFill={transform_border_color}
+					rotationSnaps={[0, 90, 180, 270]}
+					rotationSnapTolerance={5}
+					anchorStyleFunc={(anchor: Konva.Rect) => {
+						// 1. Make all anchors circles
+						anchor.cornerRadius(10);
+
+						// 2. Set the pink color
+						anchor.fill(transform_border_color);
+						anchor.stroke(transform_border_color);
+
+						// 3. Prevent the stroke from scaling weirdly on the pill shape
+						anchor.strokeScaleEnabled(false);
+
+						// 4. Make the middle-right anchor a vertical pill
+						if (anchor.hasName('middle-right') || anchor.hasName('middle-left')) {
+							// Scale x to make it thinner, y to make it taller
+							anchor.height(45);
+							anchor.scale({ x: 0.7, y: 1 });
+							anchor.cornerRadius([5, 5, 5, 5]);
+						}
+					}}
 				/>
 			</Layer>
 		</Stage>
 	</div>
 </Mainlayout>
+<!-- borderDash={[6, 4]} -->

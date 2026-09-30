@@ -5,6 +5,7 @@
 	import type { ImageDimensions } from '$lib/client-state/moodboard/image.svelte.js';
 	import { useImage } from '$lib/utils/image.svelte.js';
 	import { untrack } from 'svelte';
+	import { handleHover } from '$lib/utils/shape.svelte.js';
 
 	interface ComponentProps {
 		img: ImageDimensions;
@@ -81,5 +82,7 @@
 					: stage_state.current.width / 2 - e.target.x() - img.width / 2;
 		img.awayFromTop = e.target.y();
 	}}
+	onmouseenter={(e: KonvaEventObject<MouseEvent>) => handleHover(e, true)}
+	onmouseleave={(e: KonvaEventObject<MouseEvent>) => handleHover(e, false)}
 	ontransformend={onTransformEnd}
 />

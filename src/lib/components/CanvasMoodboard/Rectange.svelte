@@ -3,6 +3,7 @@
 	import type { KonvaEventObject } from 'konva/lib/Node';
 	import { stage_state } from '$lib/client-state/moodboard/konva.svelte.js';
 	import type { RectDimensions } from '$lib/client-state/moodboard/rectangle.svelte.js';
+	import { handleHover } from '$lib/utils/shape.svelte.js';
 
 	interface ComponentProps {
 		rect: RectDimensions;
@@ -63,5 +64,7 @@
 					: stage_state.current.width / 2 - e.target.x() - e.target.width() / 2;
 		rect.awayFromTop = e.target.y();
 	}}
+	onmouseenter={(e: KonvaEventObject<MouseEvent>) => handleHover(e, true)}
+	onmouseleave={(e: KonvaEventObject<MouseEvent>) => handleHover(e, false)}
 	ontransformend={onTransformEnd}
 />

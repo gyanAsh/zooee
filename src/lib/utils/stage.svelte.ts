@@ -152,3 +152,5 @@ export const handleMouseUp = ({
 		setSelectedIds(selected);
 	}
 };
+
+export const transform_border_color = '#ff8ac8'; //'#42A0DE'

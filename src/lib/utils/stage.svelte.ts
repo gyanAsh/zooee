@@ -30,7 +30,7 @@ export const handleStageClick = ({
 	}
 
 	const clickedId = e.target.id();
-
+	if (!clickedId) return;
 	// Did we pressed shift or ctrl ?
 	const metaPressed = e.evt.shiftKey || e.evt.ctrlKey || e.evt.metaKey;
 	const isSelected = selectedIds.includes(clickedId);

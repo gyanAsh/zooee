@@ -83,12 +83,15 @@
 
 		tick().then(() => {
 			// eslint-disable-next-line svelte/prefer-svelte-reactivity
-			const cache = new Map<string, Konva.Node | undefined>();
+			const cache = new Map<string, Konva.Node | null>();
 			const lookup = (id: string) => {
-				if (!cache.has(id)) cache.set(id, layer.findOne<Konva.Node>(`#${id}`));
-				return cache.get(id);
+				let node = cache.get(id);
+				if (node === undefined) {
+					node = layer.findOne<Konva.Node>(`#${id}`) ?? null;
+					cache.set(id, node);
+				}
+				return node;
 			};
-
 			for (const id of order) {
 				const node = lookup(id);
 				if (node?.getParent() === layer) node.moveToTop();

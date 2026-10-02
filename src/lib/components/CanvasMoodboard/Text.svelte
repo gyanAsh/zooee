@@ -21,7 +21,7 @@
 	);
 	let y = $derived(txt.awayFromTop);
 
-	const onTransformEnd = (e: KonvaEventObject<DragEvent>) => {
+	const onTransform = (e: KonvaEventObject<DragEvent>) => {
 		const node = e.target;
 
 		const scaleX = node.scaleX();
@@ -70,8 +70,10 @@
 	}}
 	onmouseenter={(e: KonvaEventObject<MouseEvent>) => handleHover(e, true)}
 	onmouseleave={(e: KonvaEventObject<MouseEvent>) => handleHover(e, false)}
-	ontransformend={onTransformEnd}
+	ontransform={onTransform}
 />
 
 <!-- const visualWidth = node.width() * node.scaleX();
-const visualHeight = node.height() * node.scaleY(); -->
+const visualHeight = node.height() * node.scaleY();
+//try auto on width and height for text also add fontsize change
+-->

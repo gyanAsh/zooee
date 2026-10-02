@@ -16,6 +16,7 @@
 		transform_border_color
 	} from '$lib/utils/stage.svelte';
 	import type { KonvaEventObject } from 'konva/lib/Node';
+	import Circle from '$lib/components/CanvasMoodboard/Circle.svelte';
 	interface Box {
 		x: number;
 		y: number;
@@ -128,6 +129,8 @@
 						<Image id={clip.id} bind:img={clip.attr} />
 					{:else if clip.type === 'text'}
 						<Text id={clip.id} bind:txt={clip.attr} />
+					{:else if clip.type === 'circle'}
+						<Circle id={clip.id} bind:circle={clip.attr} />
 					{/if}
 				{/each}
 
@@ -168,17 +171,20 @@
 						anchor.cornerRadius(10);
 
 						// 2. Set the pink color
-						anchor.fill(transform_border_color);
+						anchor.fill('white');
 						anchor.stroke(transform_border_color);
+						anchor.strokeWidth(2);
 
 						// 3. Prevent the stroke from scaling weirdly on the pill shape
 						anchor.strokeScaleEnabled(false);
 
 						// 4. Make the middle-right anchor a vertical pill
 						if (anchor.hasName('middle-right') || anchor.hasName('middle-left')) {
+							let height = 44;
 							// Scale x to make it thinner, y to make it taller
-							anchor.height(45);
+							anchor.height(height);
 							anchor.scale({ x: 0.7, y: 1 });
+							anchor.offsetY(height / 2);
 							anchor.cornerRadius([5, 5, 5, 5]);
 						}
 					}}

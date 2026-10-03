@@ -1,8 +1,9 @@
 <script lang="ts">
-	import { left_layout_state } from '$lib/client-state/moodboard/leftlayout/index.svelte.js';
+	import { left_layout_state } from '$lib/client-state/moodboard/leftlayout/index.svelte';
 	import ElementModal from './ElementModal.svelte';
 	import LayersModal from './LayersModal.svelte';
 	import TemplateModal from './TemplateModal.svelte';
+	import UploadModal from './UploadModal.svelte';
 </script>
 
 <section class="relative h-full bg-white">
@@ -19,7 +20,7 @@
 			onclick={() => (left_layout_state.modal = 'layers')}
 		>
 			<div
-				class="grid rounded-lg p-1.5 text-gray-800 duration-75 ease-in group-hover:text-blue-800 aria-pressed:bg-blue-700 aria-pressed:text-gray-100"
+				class="grid rounded-lg p-1.5 text-gray-800 duration-75 ease-in group-hover:bg-blue-50 group-hover:text-blue-800 aria-pressed:bg-blue-700 aria-pressed:text-gray-100"
 				aria-pressed={left_layout_state.modal === 'layers'}
 			>
 				<svg
@@ -43,7 +44,7 @@
 				>
 			</div>
 
-			<h2 class="text-xs">Layers</h2>
+			<h2 class="text-xxs">Layers</h2>
 		</button>
 
 		<button
@@ -58,7 +59,7 @@
 			onclick={() => (left_layout_state.modal = 'elements')}
 		>
 			<div
-				class="grid rounded-lg p-1.5 text-gray-800 duration-75 ease-in group-hover:text-blue-800 aria-pressed:bg-blue-700 aria-pressed:text-gray-100"
+				class="grid rounded-lg p-1.5 text-gray-800 duration-75 ease-in group-hover:bg-blue-50 group-hover:text-blue-800 aria-pressed:bg-blue-700 aria-pressed:text-gray-100"
 				aria-pressed={left_layout_state.modal === 'elements'}
 			>
 				<div class="relative size-5">
@@ -119,7 +120,40 @@
 				</div>
 			</div>
 
-			<h2 class="text-xs">Elements</h2>
+			<h2 class="text-xxs">Elements</h2>
+		</button>
+		<button
+			aria-label="uploads"
+			aria-pressed={left_layout_state.modal === 'uploads'}
+			class=" group relative flex size-15 cursor-pointer flex-col items-center justify-center gap-0.5
+		            rounded-lg border border-transparent p-9 font-bold
+					text-gray-800 duration-75 ease-in
+					not-aria-pressed:hover:border-blue-200
+					not-aria-pressed:hover:bg-blue-100 not-aria-pressed:hover:text-blue-900 aria-pressed:bg-blue-200
+					aria-pressed:font-bold aria-pressed:text-blue-800"
+			onclick={() => (left_layout_state.modal = 'uploads')}
+		>
+			<div
+				class="grid rounded-lg p-1.5 text-gray-800 duration-75 ease-in group-hover:bg-blue-50 group-hover:text-blue-800 aria-pressed:bg-blue-700 aria-pressed:text-gray-100"
+				aria-pressed={left_layout_state.modal === 'uploads'}
+			>
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					width="20"
+					height="20"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					class="lucide lucide-cloud-upload preview-icon"
+					><path d="M12 13v8" /><path
+						d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"
+					/><path d="m8 17 4-4 4 4" /></svg
+				>
+			</div>
+			<h2 class="text-xxs">Uploads</h2>
 		</button>
 		<button
 			aria-label="template"
@@ -133,7 +167,7 @@
 			onclick={() => (left_layout_state.modal = 'template')}
 		>
 			<div
-				class="grid rounded-lg p-1.5 text-gray-800 duration-75 ease-in group-hover:text-blue-800 aria-pressed:bg-blue-700 aria-pressed:text-gray-100"
+				class="grid rounded-lg p-1.5 text-gray-800 duration-75 ease-in group-hover:bg-blue-50 group-hover:text-blue-800 aria-pressed:bg-blue-700 aria-pressed:text-gray-100"
 				aria-pressed={left_layout_state.modal === 'template'}
 			>
 				<svg
@@ -162,13 +196,15 @@
 					/></svg
 				>
 			</div>
-			<h2 class="text-xs">Templates</h2>
+			<h2 class="text-xxs">Templates</h2>
 		</button>
 	</div>
 	{#if left_layout_state.modal === 'layers'}
 		<LayersModal />
 	{:else if left_layout_state.modal === 'elements'}
 		<ElementModal />
+	{:else if left_layout_state.modal === 'uploads'}
+		<UploadModal />
 	{:else if left_layout_state.modal === 'template'}
 		<TemplateModal />
 	{/if}

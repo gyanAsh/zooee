@@ -12,9 +12,11 @@
 		handleMouseDown,
 		handleMouseMove,
 		handleMouseUp,
-		handleStageClick
+		handleStageClick,
+		transform_border_color
 	} from '$lib/utils/stage.svelte';
 	import type { KonvaEventObject } from 'konva/lib/Node';
+	import Circle from '$lib/components/CanvasMoodboard/Circle.svelte';
 	interface Box {
 		x: number;
 		y: number;
@@ -81,12 +83,15 @@
 
 		tick().then(() => {
 			// eslint-disable-next-line svelte/prefer-svelte-reactivity
-			const cache = new Map<string, Konva.Node | undefined>();
+			const cache = new Map<string, Konva.Node | null>();
 			const lookup = (id: string) => {
-				if (!cache.has(id)) cache.set(id, layer.findOne<Konva.Node>(`#${id}`));
-				return cache.get(id);
+				let node = cache.get(id);
+				if (node === undefined) {
+					node = layer.findOne<Konva.Node>(`#${id}`) ?? null;
+					cache.set(id, node);
+				}
+				return node;
 			};
-
 			for (const id of order) {
 				const node = lookup(id);
 				if (node?.getParent() === layer) node.moveToTop();
@@ -127,6 +132,8 @@
 						<Image id={clip.id} bind:img={clip.attr} />
 					{:else if clip.type === 'text'}
 						<Text id={clip.id} bind:txt={clip.attr} />
+					{:else if clip.type === 'circle'}
+						<Circle id={clip.id} bind:circle={clip.attr} />
 					{/if}
 				{/each}
 
@@ -142,20 +149,51 @@
 				{/if}
 				<Transformer
 					bind:this={transformerComp}
-					boundboxfunc={(oldBox: Box, newBox: Box) => {
+					boundBoxFunc={(oldBox: Box, newBox: Box) => {
 						//Limit resize
 						if (newBox.width < 5 || newBox.height < 5) return oldBox;
 						return newBox;
 					}}
-					borderStroke="#000"
-					borderStrokeWidth={3}
-					anchorFill="#fff"
-					anchorStroke="#000"
-					anchorStrokeWidth={2}
-					anchorSize={20}
-					anchorCornerRadius={50}
+					enabledAnchors={[
+						'top-left',
+						'top-right',
+						'bottom-left',
+						'bottom-right',
+						'middle-right',
+						'middle-left'
+					]}
+					borderStroke={transform_border_color}
+					borderStrokeWidth={1.5}
+					anchorSize={12}
+					anchorStroke={transform_border_color}
+					anchorFill={transform_border_color}
+					rotationSnaps={[0, 90, 180, 270]}
+					rotationSnapTolerance={5}
+					anchorStyleFunc={(anchor: Konva.Rect) => {
+						// 1. Make all anchors circles
+						anchor.cornerRadius(10);
+
+						// 2. Set the pink color
+						anchor.fill('white');
+						anchor.stroke(transform_border_color);
+						anchor.strokeWidth(2);
+
+						// 3. Prevent the stroke from scaling weirdly on the pill shape
+						anchor.strokeScaleEnabled(false);
+
+						// 4. Make the middle-right anchor a vertical pill
+						if (anchor.hasName('middle-right') || anchor.hasName('middle-left')) {
+							let height = 44;
+							// Scale x to make it thinner, y to make it taller
+							anchor.height(height);
+							anchor.scale({ x: 0.7, y: 1 });
+							anchor.offsetY(height / 2);
+							anchor.cornerRadius([5, 5, 5, 5]);
+						}
+					}}
 				/>
 			</Layer>
 		</Stage>
 	</div>
 </Mainlayout>
+<!-- borderDash={[6, 4]} -->

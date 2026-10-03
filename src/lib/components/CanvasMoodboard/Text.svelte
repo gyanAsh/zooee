@@ -3,6 +3,7 @@
 	import type { KonvaEventObject } from 'konva/lib/Node';
 	import { stage_state } from '$lib/client-state/moodboard/konva.svelte.js';
 	import type { TextDimensions } from '$lib/client-state/moodboard/text.svelte.js';
+	import { handleHover } from '$lib/utils/shape.svelte.js';
 
 	interface ComponentProps {
 		txt: TextDimensions;
@@ -20,7 +21,7 @@
 	);
 	let y = $derived(txt.awayFromTop);
 
-	const onTransformEnd = (e: KonvaEventObject<DragEvent>) => {
+	const onTransform = (e: KonvaEventObject<DragEvent>) => {
 		const node = e.target;
 
 		const scaleX = node.scaleX();
@@ -67,8 +68,12 @@
 					: stage_state.current.width / 2 - e.target.x() - e.target.width() / 2;
 		txt.awayFromTop = e.target.y();
 	}}
-	ontransformend={onTransformEnd}
+	onmouseenter={(e: KonvaEventObject<MouseEvent>) => handleHover(e, true)}
+	onmouseleave={(e: KonvaEventObject<MouseEvent>) => handleHover(e, false)}
+	ontransformend={onTransform}
 />
 
 <!-- const visualWidth = node.width() * node.scaleX();
-const visualHeight = node.height() * node.scaleY(); -->
+const visualHeight = node.height() * node.scaleY();
+//try auto on width and height for text also add fontsize change
+-->

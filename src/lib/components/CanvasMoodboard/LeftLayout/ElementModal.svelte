@@ -32,4 +32,61 @@
 			>
 		</button>
 	</div>
+	<div class="grid grid-cols-3 gap-2">
+		<div class="grid place-items-center gap-1 rounded-lg border p-2 text-xs">
+			<div class="w-fit rounded-lg border bg-gray-100 p-2">
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					width="24"
+					height="24"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					class="lucide lucide-type preview-icon"
+					><path d="M12 4v16" /><path d="M4 7V5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2" /><path
+						d="M9 20h6"
+					/></svg
+				>
+			</div>
+			<h2>Text</h2>
+		</div>
+		<div class="grid place-items-center gap-1 rounded-lg border p-2 text-xs">
+			<div class="w-fit rounded-lg border bg-gray-100 p-2">
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					width="24"
+					height="24"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					class="lucide lucide-circle preview-icon"><circle cx="12" cy="12" r="10" /></svg
+				>
+			</div>
+			<h2>Circle</h2>
+		</div>
+		<div class="grid place-items-center gap-1 rounded-lg border p-2 text-xs">
+			<div class="w-fit rounded-lg border bg-gray-100 p-2">
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					width="24"
+					height="24"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					class="lucide lucide-rectangle-horizontal preview-icon"
+					><rect width="20" height="12" x="2" y="6" rx="2" /></svg
+				>
+			</div>
+			<h2>Rectangle</h2>
+		</div>
+	</div>
 </section>

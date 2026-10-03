@@ -145,9 +145,9 @@
 						: overIndex < draggingIndex
 							? overIndex > i
 								? '-translate-y-1 duration-100 ease-in'
-								: 'translate-y-11 duration-100 ease-in'
+								: 'translate-y-1 duration-100 ease-in'
 							: overIndex > i - 1
-								? '-translate-y-11 duration-100 ease-in'
+								? '-translate-y-1 duration-100 ease-in'
 								: 'translate-y-1 duration-100 ease-in'}
 
 					{draggingIndex === i

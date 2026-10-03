@@ -70,7 +70,7 @@
 	}}
 	onmouseenter={(e: KonvaEventObject<MouseEvent>) => handleHover(e, true)}
 	onmouseleave={(e: KonvaEventObject<MouseEvent>) => handleHover(e, false)}
-	ontransform={onTransform}
+	ontransformend={onTransform}
 />
 
 <!-- const visualWidth = node.width() * node.scaleX();

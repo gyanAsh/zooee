@@ -144,11 +144,11 @@
 						? ''
 						: overIndex < draggingIndex
 							? overIndex > i
-								? '-translate-y-1 duration-75 ease-in'
-								: 'translate-y-1 duration-75 ease-in'
+								? '-translate-y-1 duration-100 ease-in'
+								: 'translate-y-11 duration-100 ease-in'
 							: overIndex > i - 1
-								? '-translate-y-1 duration-75 ease-in'
-								: 'translate-y-1 duration-75 ease-in'}
+								? '-translate-y-11 duration-100 ease-in'
+								: 'translate-y-1 duration-100 ease-in'}
 
 					{draggingIndex === i
 						? 'my-2 scale-[0.98] -rotate-2 border-dashed border-sky-500 opacity-40 shadow-lg'

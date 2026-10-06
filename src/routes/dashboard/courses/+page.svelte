@@ -1,4 +1,4 @@
 <script lang="ts">
 </script>
 
-<section>asdf</section>
+<section>Courses</section>

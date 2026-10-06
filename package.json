@@ -1,7 +1,7 @@
 {
 	"name": "zooee",
 	"version": "0.0.1",
-	"packageManager": "pnpm@12.6.0",
+	"packageManager": "pnpm@12.9.0",
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build && npm run prepack",
@@ -79,6 +79,7 @@
 		"svelte"
 	],
 	"dependencies": {
+		"@lucide/svelte": "^1.51.0",
 		"bits-ui": "^2.19.2",
 		"runed": "^0.37.1",
 		"tailwind-animations": "^1.0.2"

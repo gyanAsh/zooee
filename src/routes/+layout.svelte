@@ -16,8 +16,8 @@
 	const { children } = $props();
 	const links = [
 		{ path: '/', title: 'Home', icon: House },
-		{ path: '/dashboard', title: 'Dashboard', icon: LayoutDashboard },
-		{ path: '/dashboard/my-page', title: 'My Page', icon: User },
+		{ path: '/dashboard', title: 'Dashboard', icon: LayoutDashboard, active_on: ['random'] },
+		{ path: '/dashboard/my-page', title: 'My Page', icon: User, active_on: ['[slug]'] },
 		{ path: '/dashboard/appointments', title: 'Appointments', icon: Calendar },
 		{ path: '/dashboard/courses', title: 'Courses', icon: GraduationCap },
 		{ path: '/dashboard/products', title: 'Products', icon: ShoppingBag }
@@ -27,12 +27,17 @@
 <section class="flex h-dvh w-dvw bg-[#F5F5F5]">
 	{#if page.url.pathname !== '/'}
 		<nav
-			class="m-2 flex w-50 flex-col gap-1 p-2"
+			class="m-2 hidden w-50 flex-col gap-1 p-2 md:flex"
 			in:fly={{ x: -10, duration: 130, easing: cubicOut }}
 			out:fly={{ x: -10, duration: 130, easing: cubicIn }}
 		>
-			{#each links as { path, icon: Icon, title } (path)}
-				{@const isActive = page.url.pathname === path}
+			{#each links as { path, icon: Icon, title, active_on } (path)}
+				{@const isActive =
+					page.url.pathname === path ||
+					active_on?.some((e) => {
+						if (e === '[slug]') return page.url.pathname.startsWith(path);
+						else return page.url.pathname === path + `/${e}`;
+					})}
 
 				<a
 					href={resolve(path as Pathname)}
@@ -47,7 +52,8 @@
 			{/each}
 		</nav>
 	{/if}
-	<div class="m-2 grow rounded-lg border bg-[#FDFDFD] p-2">
+
+	<div class="scrollbar-custom m-2 grow overflow-auto rounded-lg border bg-[#FDFDFD] p-2">
 		{@render children()}
 	</div>
 </section>

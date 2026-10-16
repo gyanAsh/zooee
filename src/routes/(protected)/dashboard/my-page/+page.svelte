@@ -7,7 +7,7 @@
 </script>
 
 <section
-	style="background: radial-gradient(125% 125% at 50% 10%, #000 40%, #6366f1 100%);"
+	style="background: radial-gradient(125% 125% at 50% 90%, #fff 40%, #475569 100%);"
 	class="scrollbar-custom relative flex h-full justify-center overflow-auto rounded-sm p-4"
 	in:fly={{ y: -10, duration: 130, easing: cubicOut }}
 >

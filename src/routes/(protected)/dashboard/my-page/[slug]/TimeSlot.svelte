@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { booking_store } from '$lib/client/client-state/booking.svelte';
+
 	const slots = [
 		'04:00',
 		'05:00',
@@ -26,10 +28,18 @@
 
 <section class="scrollbar-custom grid max-h-100 gap-1.5 overflow-auto">
 	{#each slots as slot (slot)}
-		<div
+		{@const [hours, minutes] = slot.split(':').map(Number)}
+		<button
 			class="cursor-pointer rounded-lg bg-gray-100 px-2 py-1.5 text-center hover:bg-gray-900 hover:text-gray-50"
+			onclick={() => {
+				booking_store.booking_slot = {
+					slot_format: '12h',
+					slot_hour: hours,
+					slot_mins: minutes
+				};
+			}}
 		>
 			{slot}
-		</div>
+		</button>
 	{/each}
 </section>

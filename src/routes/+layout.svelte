@@ -4,4 +4,6 @@
 	const { children } = $props();
 </script>
 
-{@render children()}
+<main class="grid h-dvh w-dvw place-items-center">
+	{@render children()}
+</main>

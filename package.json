@@ -1,7 +1,7 @@
 {
 	"name": "zooee",
 	"version": "0.0.1",
-	"packageManager": "pnpm@12.6.0",
+	"packageManager": "pnpm@12.11.2",
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build && npm run prepack",
@@ -53,8 +53,7 @@
 		"@tailwindcss/vite": "^4.3.0",
 		"@types/node": "^24",
 		"@vitest/browser-playwright": "^4.1.8",
-		"drizzle-kit": "^0.31.10",
-		"drizzle-orm": "^0.45.2",
+		"drizzle-kit": "^0.31.11",
 		"eslint": "^10.4.1",
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-svelte": "^3.19.0",
@@ -79,10 +78,12 @@
 		"svelte"
 	],
 	"dependencies": {
+		"@lucide/svelte": "^1.51.0",
 		"bits-ui": "^2.19.2",
-		"konva": "^10.6.0",
+		"drizzle-orm": "^0.45.4",
+		"jose": "^6.2.12",
 		"runed": "^0.37.1",
-		"svelte-konva": "^1.0.1",
-		"tailwind-animations": "^1.0.2"
+		"tailwind-animations": "^1.0.2",
+		"zod": "^4.6.6"
 	}
 }

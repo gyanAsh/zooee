@@ -10,6 +10,8 @@
 	import type { Pathname } from '$app/types';
 	import { fly } from 'svelte/transition';
 	import { cubicIn, cubicOut } from 'svelte/easing';
+	import Button from '$lib/client/components/ui/button.svelte';
+	import { goto } from '$app/navigation';
 
 	const { children } = $props();
 
@@ -36,17 +38,12 @@
 					if (e === '[slug]') return page.url.pathname.startsWith(path);
 					else return page.url.pathname === path + `/${e}`;
 				})}
-
-			<a
-				href={resolve(path as Pathname)}
-				class="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm transition-colors {isActive
-					? 'bg-blue-500 font-semibold text-white'
-					: 'text-gray-600 hover:bg-gray-200 hover:text-gray-900'}"
-				aria-current={isActive ? 'page' : undefined}
-			>
-				<Icon size={18} strokeWidth={2} />
-				<span>{title}</span>
-			</a>
+			<Button {isActive} variant="ghost" onClick={() => goto(resolve(path as Pathname))}>
+				<div class="flex items-center gap-2">
+					<Icon size={18} strokeWidth={2} />
+					<span>{title}</span>
+				</div>
+			</Button>
 		{/each}
 	</nav>
 

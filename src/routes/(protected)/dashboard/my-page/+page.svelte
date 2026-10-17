@@ -1,34 +1,38 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
+	import Button from '$lib/client/components/ui/button.svelte';
 	import { ArrowRight, Clock3, PencilSparkles, Plus, Settings } from '@lucide/svelte';
 	import { cubicOut } from 'svelte/easing';
 	import { fly } from 'svelte/transition';
 	const links = [15, 20, 30];
 </script>
 
+<!-- style="background: radial-gradient(125% 125% at 50% 0%, #fff 40%, #475569 100%);" -->
 <section
-	style="background: radial-gradient(125% 125% at 50% 90%, #fff 40%, #475569 100%);"
-	class="scrollbar-custom relative flex h-full justify-center overflow-auto rounded-sm p-4"
+	class="scrollbar-custom relative flex h-full justify-center overflow-auto rounded-sm bg-[#BBD3E1] p-4"
 	in:fly={{ y: -10, duration: 130, easing: cubicOut }}
 >
 	<section
 		class="absolute top-0 flex h-fit w-fit items-center justify-center gap-2.5 rounded-b-2xl border-x border-b bg-gray-50 p-2"
 	>
-		<button
-			class="inline-flex cursor-pointer items-center justify-center gap-1 rounded-lg border border-purple-300 bg-purple-200 px-2 py-1.5 text-xs font-medium text-gray-800"
-		>
-			<Settings size="14" strokeWidth="2" />
-			<span> Customize Page </span>
-		</button>
+		<Button variant="secondary">
+			<!-- class="inline-flex cursor-pointer items-center justify-center gap-1 rounded-lg bg-blue-500 px-2 py-1.5 text-xs font-medium text-gray-50" -->
+			<div class="inline-flex items-center justify-center gap-1 text-xs font-medium">
+				<Settings size="14" strokeWidth="2" />
+				<span> Customize Page </span>
+			</div>
+		</Button>
+
 		<div class="my-0.5 w-[1.5px] self-stretch rounded-full bg-gray-300"></div>
-		<button
-			class="inline-flex cursor-pointer items-center justify-center gap-1 rounded-lg bg-blue-500 px-2 py-1.5 text-xs font-medium text-gray-50"
-		>
-			<Plus class="" size="12" strokeWidth="2" />
-			<span>Add Booking Link</span>
-		</button>
+		<Button>
+			<!-- class="inline-flex cursor-pointer items-center justify-center gap-1 rounded-lg bg-blue-500 px-2 py-1.5 text-xs font-medium text-gray-50" -->
+			<div class="inline-flex items-center justify-center gap-1 text-xs font-medium">
+				<Plus class="" size="14" strokeWidth="2" />
+				<span>Add Booking Link</span>
+			</div>
+		</Button>
 	</section>
-	<section class="mt-10 h-fit w-full max-w-xl rounded-4xl border bg-gray-50 p-4">
+	<section class="mt-10 h-fit w-full max-w-xl rounded-4xl border bg-[#FEEEB6] p-4">
 		<img
 			src="https://d3p3fw3rutb1if.cloudfront.net/photos/c010380a-8595-45ad-8e1f-b17af6d93df2"
 			alt="bg_image"
@@ -42,12 +46,13 @@
 				md:size-25"
 			/>
 			<div class="flex h-full items-center justify-end">
-				<button
-					class="inline-flex cursor-pointer items-center justify-center gap-1 rounded-lg bg-blue-500 px-2 py-1.5 text-xs font-medium text-gray-50"
-				>
-					<PencilSparkles size="12" strokeWidth="2" />
-					<span>Edit Profile</span>
-				</button>
+				<Button>
+					<!-- class="inline-flex cursor-pointer items-center justify-center gap-1 rounded-lg bg-blue-500 px-2 py-1.5 text-xs font-medium text-gray-50" -->
+					<div class="inline-flex items-center justify-center gap-1 text-xs font-medium">
+						<PencilSparkles size="12" strokeWidth="2" />
+						<span>Edit Profile</span>
+					</div>
+				</Button>
 			</div>
 		</div>
 		<section class="grid gap-3">

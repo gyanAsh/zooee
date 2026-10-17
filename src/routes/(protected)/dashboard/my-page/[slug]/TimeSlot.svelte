@@ -26,11 +26,11 @@
 	];
 </script>
 
-<section class="scrollbar-custom grid max-h-100 gap-1.5 overflow-auto">
+<section class="scrollbar-custom grid max-h-100 gap-1.5 overflow-auto text-sm">
 	{#each slots as slot (slot)}
 		{@const [hours, minutes] = slot.split(':').map(Number)}
 		<button
-			class="cursor-pointer rounded-lg bg-gray-100 px-2 py-1.5 text-center hover:bg-gray-900 hover:text-gray-50"
+			class="cursor-pointer rounded-lg border bg-[#E0DED9]/30 px-2 py-1.5 text-center hover:bg-gray-900 hover:text-gray-50"
 			onclick={() => {
 				booking_store.booking_slot = {
 					slot_format: '12h',

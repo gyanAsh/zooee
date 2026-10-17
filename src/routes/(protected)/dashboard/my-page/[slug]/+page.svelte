@@ -11,8 +11,7 @@
 </script>
 
 <section
-	style="background: radial-gradient(125% 125% at 50% 10%, #000 40%, #6366f1 100%);"
-	class="scrollbar-custom relative flex h-full justify-center overflow-auto rounded-sm"
+	class="scrollbar-custom relative flex h-full justify-center overflow-auto rounded-sm bg-[#E0DED9]"
 	in:fly={{ y: -10, duration: 130, easing: cubicOut }}
 >
 	<section
@@ -33,7 +32,7 @@
 		</button>
 	</section>
 	<div
-		class="my-auto grid aspect-10/5 w-full max-w-4xl grid-cols-12 gap-5 bg-white p-5 shadow-2xl md:mx-5 md:rounded-lg md:border"
+		class="my-auto grid aspect-10/5 w-full max-w-4xl grid-cols-12 gap-5 bg-[#FCFBF7] p-5 shadow-2xl md:mx-5 md:rounded-4xl md:border"
 	>
 		<section class=" col-span-12 md:col-span-4">
 			<AppointmentInfo />
@@ -43,13 +42,13 @@
 				<section class="grid grid-cols-2">
 					<button
 						data-selected={tab_state === 'booking'}
-						class="cursor-pointer rounded-l-lg border px-2 py-1.5
+						class="cursor-pointer rounded-lg border px-2 py-1.5
 						data-[selected=true]:bg-gray-900 data-[selected=true]:text-gray-50"
 						onclick={() => (tab_state = 'booking')}>Select Date & Time</button
 					>
 					<button
 						data-selected={tab_state === 'user_details'}
-						class="cursor-pointer rounded-r-lg border px-2 py-1.5
+						class="cursor-pointer rounded-lg border px-2 py-1.5
 						data-[selected=true]:bg-gray-900 data-[selected=true]:text-gray-50"
 						onclick={() => (tab_state = 'user_details')}>Fill Details</button
 					>

@@ -59,7 +59,7 @@
 		{#each dates as date (date)}
 			{#if typeof date === 'number'}
 				<p
-					class="col-span-1 aspect-square w-full cursor-pointer content-center rounded-lg bg-gray-100
+					class="col-span-1 aspect-square w-full cursor-pointer content-center rounded-lg border bg-[#E0DED9]/30
 						text-center text-gray-900 transition-all duration-75 ease-in hover:bg-gray-900 hover:text-gray-50"
 				>
 					{date}

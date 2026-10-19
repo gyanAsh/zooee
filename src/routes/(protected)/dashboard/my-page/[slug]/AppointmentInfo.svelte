@@ -8,7 +8,7 @@
 		<img
 			src="https://framerusercontent.com/images/GPMWO2lffxJQOSExK7qFWyv6M.jpg?width=200"
 			alt="temp_profile_img"
-			class="aspect-square size-15 rounded-full border-2 border-gray-50 bg-gray-50 object-cover md:size-20"
+			class="aspect-square size-15 rounded-2xl border-2 border-gray-50 bg-gray-50 object-cover md:size-20"
 		/>
 		<h1 class="font-bold text-gray-800">Gyan Ashish Ekka</h1>
 		<h2 class="font-medium text-gray-500">Your Stratagic Patner in Growth.</h2>
@@ -17,13 +17,14 @@
 		<h1 class="flex flex-wrap gap-1.5 text-lg font-bold text-gray-800">
 			<span>Book Your Breakthrough Session</span>
 			<span
-				class=" inline-flex w-fit items-center justify-center gap-1 rounded-lg border border-gray-200 bg-gray-100 px-1 text-xxs leading-6 text-gray-900"
+				class=" inline-flex w-fit items-center justify-center gap-1 rounded-lg border border-gray-200 bg-[#E0DED9]/30
+				px-2 py-1 text-xs text-gray-900"
 			>
 				<Clock size="14" stroke-width="2.5" />
 				15 mins</span
 			>
 		</h1>
-		<h2 class=" text-sm font-medium text-gray-500">
+		<h2 class=" font-medium text-gray-500">
 			Need Brand Groth ? Get Expert advice, tailored stratagies and market smarter with confidence.
 		</h2>
 	</div>

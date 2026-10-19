@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import Button from '$lib/client/components/ui/button.svelte';
-	import { ArrowRight, Clock3, PencilSparkles, Plus, Settings } from '@lucide/svelte';
+	import { Clock3, PencilSparkles, Plus } from '@lucide/svelte';
 	import { cubicOut } from 'svelte/easing';
 	import { fly } from 'svelte/transition';
 	const links = [15, 20, 30];
@@ -9,7 +9,7 @@
 
 <!-- style="background: radial-gradient(125% 125% at 50% 0%, #fff 40%, #475569 100%);" -->
 <section
-	class="scrollbar-custom relative flex h-full justify-center overflow-auto rounded-sm bg-[#BBD3E1] p-4"
+	class="scrollbar-custom relative flex h-full justify-center overflow-auto rounded-sm bg-[#E0DED9] p-4"
 	in:fly={{ y: -10, duration: 130, easing: cubicOut }}
 >
 	<section
@@ -17,95 +17,81 @@
 	>
 		<Button variant="secondary">
 			<!-- class="inline-flex cursor-pointer items-center justify-center gap-1 rounded-lg bg-blue-500 px-2 py-1.5 text-xs font-medium text-gray-50" -->
-			<div class="inline-flex items-center justify-center gap-1 text-xs font-medium">
-				<Settings size="14" strokeWidth="2" />
-				<span> Customize Page </span>
+			<div class="inline-flex items-center justify-center gap-1 text-sm font-medium">
+				<PencilSparkles size="14" strokeWidth="2" />
+				<span>Edit Profile</span>
 			</div>
 		</Button>
 
 		<div class="my-0.5 w-[1.5px] self-stretch rounded-full bg-gray-300"></div>
 		<Button>
 			<!-- class="inline-flex cursor-pointer items-center justify-center gap-1 rounded-lg bg-blue-500 px-2 py-1.5 text-xs font-medium text-gray-50" -->
-			<div class="inline-flex items-center justify-center gap-1 text-xs font-medium">
+			<div class="inline-flex items-center justify-center gap-1 text-sm font-medium">
 				<Plus class="" size="14" strokeWidth="2" />
 				<span>Add Booking Link</span>
 			</div>
 		</Button>
 	</section>
-	<section class="mt-10 h-fit w-full max-w-xl rounded-4xl border bg-[#FEEEB6] p-4">
+	<section
+		class="mt-10 grid h-fit w-full max-w-3xl gap-2.5 rounded-4xl border bg-[#FCFBF7] p-4 text-sm"
+	>
 		<img
 			src="https://d3p3fw3rutb1if.cloudfront.net/photos/c010380a-8595-45ad-8e1f-b17af6d93df2"
 			alt="bg_image"
-			class="aspect-10/5 w-full rounded-2xl object-cover md:aspect-10/3"
+			class="aspect-10/4 w-full rounded-2xl object-cover md:aspect-10/3"
 		/>
-		<div class="relative h-12 md:h-15">
+		<div class="relative">
 			<img
 				src="https://framerusercontent.com/images/GPMWO2lffxJQOSExK7qFWyv6M.jpg?width=200"
 				alt="temp_profile_img"
-				class="absolute aspect-square size-20 translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-gray-50 object-cover
-				md:size-25"
+				class="absolute right-0 aspect-square size-20 -translate-x-1/2 translate-y-[-80%] rounded-2xl
+			border-2 border-gray-50 bg-gray-50 object-cover md:size-25"
 			/>
-			<div class="flex h-full items-center justify-end">
-				<Button>
-					<!-- class="inline-flex cursor-pointer items-center justify-center gap-1 rounded-lg bg-blue-500 px-2 py-1.5 text-xs font-medium text-gray-50" -->
-					<div class="inline-flex items-center justify-center gap-1 text-xs font-medium">
-						<PencilSparkles size="12" strokeWidth="2" />
-						<span>Edit Profile</span>
-					</div>
-				</Button>
-			</div>
 		</div>
-		<section class="grid gap-3">
+		<section class="grid gap-5">
 			<div>
-				<h1 class="font-medium">Gyan Ashish Ekka</h1>
-				<h2 class="text-sm text-gray-500">@ekkoish</h2>
-
-				<p class="my-2 text-sm">
+				<div class="flex items-center gap-2.5">
+					<h1 class="text-lg font-bold">Gyan Ashish Ekka</h1>
+					<h2 class="  text-gray-500">@ekkoish</h2>
+				</div>
+				<p>
 					We make shopping grocerries online fun! Best part is you get to learn what you are eating.
 				</p>
 			</div>
-			<div class="  flex flex-col items-center justify-center gap-2.5">
-				{#if links.length > 0}
-					<section class="grid w-full gap-2.5">
-						{#each links as link (link)}
-							<a
-								href={resolve(`/dashboard/my-page/${link}`)}
-								class="group flex w-full items-center justify-between rounded-2xl border border-gray-300 bg-white px-4 py-3.5 text-sm transition-all duration-75 hover:bg-gray-100"
-							>
-								<div class="grid gap-1">
-									<h1 class="font-bold">{link} mins meeting</h1>
-									<p class="text-xs">Meeting description....</p>
-									<div class="text-xxs font-bold">
-										<span
-											class="inline-flex w-fit items-center justify-center gap-0.5 rounded-full
-											border border-gray-300 bg-gray-50 px-1.5 py-1 text-gray-900"
-										>
-											<Clock3 size="10" stroke-width="3" />
-											15 m</span
-										>
-									</div>
+
+			{#if links.length > 0}
+				<section class="grid w-full gap-2.5">
+					{#each links as link (link)}
+						<a
+							href={resolve(`/dashboard/my-page/${link}`)}
+							class="group flex w-full items-center justify-between rounded-2xl border
+								border-gray-300 bg-[#E0DED9]/30 px-4 py-3 transition-all duration-75 ease-in hover:border-gray-500
+							hover:bg-white active:-translate-y-1 active:scale-[0.99]"
+						>
+							<div class="grid">
+								<h1 class=" font-medium">{link} mins meeting</h1>
+								<p>Meeting description....</p>
+							</div>
+							<div class="grid h-full place-items-center">
+								<div
+									class="inline-flex w-fit items-center gap-0.5 font-medium
+									  text-gray-800"
+								>
+									<Clock3 size="16" stroke-width="2.5" />
+									<span>{link} m</span>
 								</div>
-								<div class="h-full">
-									<button
-										class="inline-flex cursor-pointer items-center justify-between gap-1 rounded-full bg-gray-700 px-4 py-1.5 text-xs font-medium text-gray-50
-									    hover:scale-105 active:scale-95"
-									>
-										<span>Book</span>
-										<ArrowRight class="size-0 group-hover:size-full" size="14" strokeWidth="3" />
-									</button>
-								</div>
-							</a>
-						{/each}
-					</section>
-				{:else}
-					<h1 class="my-4 text-xs text-gray-500 italic">---- No Appointment Links Created ----</h1>
-					<button
-						class="h-fit w-fit max-w-xl cursor-pointer rounded-lg bg-blue-500 px-2 py-1.5 text-sm font-bold text-white"
-					>
-						Create Booking Links
-					</button>
-				{/if}
-			</div>
+							</div>
+						</a>
+					{/each}
+				</section>
+			{:else}
+				<h1 class="my-4 text-sm text-gray-500 italic">---- No Appointment Links Created ----</h1>
+				<button
+					class="h-fit w-fit max-w-xl cursor-pointer rounded-lg bg-blue-500 px-2 py-1.5 text-sm font-bold text-white"
+				>
+					Create Booking Links
+				</button>
+			{/if}
 		</section>
 	</section>
 </section>

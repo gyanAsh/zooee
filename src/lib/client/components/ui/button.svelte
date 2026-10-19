@@ -11,11 +11,13 @@
 		? 'btn'
 		: variant === 'secondary'
 			? 'secondary_btn'
-			: variant === 'ghost'
-				? isActive
-					? 'btn'
-					: 'ghost_btn'
-				: ''}"
+			: variant === 'black'
+				? ''
+				: variant === 'ghost'
+					? isActive
+						? 'btn'
+						: 'ghost_btn'
+					: ''}"
 	aria-current={isActive ? 'page' : undefined}
 >
 	{@render children()}
@@ -37,6 +39,21 @@
 		box-shadow: inset 0 2px 4px #0004;
 	}
 
+	:global(.black_btn) {
+		background: linear-gradient(#18181b, #27272a);
+
+		color: white;
+		box-shadow:
+			inset 0 1px 0 #ffffff56,
+			inset 0 -2px 0 #0003,
+			0 1px 2px #0006,
+			0 8px 24px -6px #d4d4d899;
+	}
+	:global(.black_btn:active) {
+		translate: 0 1px;
+		box-shadow: inset 0 2px 4px #0004;
+	}
+
 	:global(.secondary_btn) {
 		background: linear-gradient(#d1d5dc, #e5e7eb);
 		color: #111828;
@@ -44,7 +61,7 @@
 			inset 0 1px 0 #ffffff56,
 			inset 0 -2px 0 #0003,
 			0 1px 2px #0006,
-			0 8px 24px -6px #8ec5ff99;
+			0 8px 24px -6px #d1d5dc99;
 	}
 	:global(.secondary_btn:active) {
 		translate: 0 1px;

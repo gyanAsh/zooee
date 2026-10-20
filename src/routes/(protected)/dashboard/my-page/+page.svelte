@@ -1,15 +1,20 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import Button from '$lib/client/components/ui/button.svelte';
-	import { Clock3, PencilSparkles, Plus } from '@lucide/svelte';
+	import EditBox from '$lib/client/components/ui/edit_box.svelte';
+	import { Clock3, ImagePlus, PencilSparkles, Plus } from '@lucide/svelte';
 	import { cubicOut } from 'svelte/easing';
 	import { fly } from 'svelte/transition';
+	import EditNameDialog from './EditNameDialog.svelte';
+	import EditUsernameDialog from './EditUsernameDialog.svelte';
+	import EditBioDialog from './EditBioDialog.svelte';
+	import AddProfileImage from './AddProfileImage.svelte';
 	const links = [15, 20, 30];
 </script>
 
 <!-- style="background: radial-gradient(125% 125% at 50% 0%, #fff 40%, #475569 100%);" -->
 <section
-	class="scrollbar-custom relative flex h-full justify-center overflow-auto rounded-sm bg-[#E0DED9] p-4"
+	class="scrollbar-custom relative flex h-full justify-center overflow-auto rounded-sm bg-[#E0DED9] p-4 select-none"
 	in:fly={{ y: -10, duration: 130, easing: cubicOut }}
 >
 	<section
@@ -41,22 +46,52 @@
 			class="aspect-10/4 w-full rounded-2xl object-cover md:aspect-10/3"
 		/>
 		<div class="relative">
-			<img
-				src="https://framerusercontent.com/images/GPMWO2lffxJQOSExK7qFWyv6M.jpg?width=200"
-				alt="temp_profile_img"
-				class="absolute right-0 aspect-square size-20 -translate-x-1/2 translate-y-[-80%] rounded-2xl
-			border-2 border-gray-50 bg-gray-50 object-cover md:size-25"
-			/>
+			{#if true}
+				<AddProfileImage>
+					<section
+						class="group absolute right-0 flex aspect-square size-20 -translate-x-1/2 translate-y-[-80%] cursor-pointer flex-col items-center justify-center
+					    gap-1 rounded-2xl border-2 border-dashed border-gray-400 bg-gray-100 object-cover text-sm font-medium text-gray-400 hover:border-gray-500 hover:text-gray-500 active:border-gray-800 active:text-gray-800 md:size-25"
+					>
+						<ImagePlus size="24" strokeWidth="1.5" />
+						<h2>Profile</h2>
+						<div
+							class="absolute -top-8 right-3 hidden w-fit rounded-lg border border-gray-500 bg-zinc-900 px-1.5 py-1 text-center text-xs text-gray-50 transition-all duration-150 ease-in group-hover:flex"
+						>
+							Add Profile
+						</div>
+					</section>
+				</AddProfileImage>
+			{:else}
+				<img
+					src="https://framerusercontent.com/images/GPMWO2lffxJQOSExK7qFWyv6M.jpg?width=200"
+					alt="temp_profile_img"
+					class="absolute right-0 aspect-square size-20 -translate-x-1/2 translate-y-[-80%] rounded-2xl
+		border-2 border-gray-50 bg-gray-50 object-cover md:size-25"
+				/>
+			{/if}
 		</div>
 		<section class="grid gap-5">
 			<div>
 				<div class="flex items-center gap-2.5">
-					<h1 class="text-lg font-bold">Gyan Ashish Ekka</h1>
-					<h2 class="  text-gray-500">@ekkoish</h2>
+					<EditNameDialog>
+						<EditBox text="Update Display Name">
+							<h1 class="text-lg font-bold">Gyan Ashish Ekka</h1>
+						</EditBox>
+					</EditNameDialog>
+					<EditUsernameDialog>
+						<EditBox text="Update Username">
+							<h2 class="  text-gray-500">@ekkoish</h2>
+						</EditBox>
+					</EditUsernameDialog>
 				</div>
-				<p>
-					We make shopping grocerries online fun! Best part is you get to learn what you are eating.
-				</p>
+				<EditBioDialog>
+					<EditBox text="Update Bio">
+						<p>
+							We make shopping grocerries online fun! Best part is you get to learn what you are
+							eating.
+						</p>
+					</EditBox>
+				</EditBioDialog>
 			</div>
 
 			{#if links.length > 0}

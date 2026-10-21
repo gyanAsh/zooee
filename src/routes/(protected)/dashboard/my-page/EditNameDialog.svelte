@@ -49,9 +49,9 @@
 				</Dialog.Close>
 			</div>
 			<Dialog.Close
-				class="absolute top-5 right-5 cursor-pointer rounded-md focus-visible:ring-2
-				focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background
-				focus-visible:outline-hidden active:scale-[0.98]"
+				class="absolute top-5 right-5 cursor-pointer rounded-md   hover:bg-gray-200
+				focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2
+				focus-visible:ring-offset-background focus-visible:outline-hidden active:scale-[0.98]"
 			>
 				<div>
 					<X class="size-5 text-foreground" />

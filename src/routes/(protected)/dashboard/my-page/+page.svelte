@@ -9,7 +9,9 @@
 	import EditUsernameDialog from './EditUsernameDialog.svelte';
 	import EditBioDialog from './EditBioDialog.svelte';
 	import AddProfileImage from './AddProfileImage.svelte';
+	import AddHeroImage from './AddHeroImage.svelte';
 	const links = [15, 20, 30];
+	let { form } = $props();
 </script>
 
 <!-- style="background: radial-gradient(125% 125% at 50% 0%, #fff 40%, #475569 100%);" -->
@@ -40,14 +42,37 @@
 	<section
 		class="mt-10 grid h-fit w-full max-w-3xl gap-2.5 rounded-4xl border bg-[#FCFBF7] p-4 text-sm"
 	>
-		<img
-			src="https://d3p3fw3rutb1if.cloudfront.net/photos/c010380a-8595-45ad-8e1f-b17af6d93df2"
-			alt="bg_image"
-			class="aspect-10/4 w-full rounded-2xl object-cover md:aspect-10/3"
-		/>
+		{#if true}
+			<AddHeroImage {form}>
+				<section
+					class="group relative grid aspect-10/4 w-full cursor-pointer
+				 place-items-center gap-1 rounded-2xl border-2 border-dashed border-gray-400 bg-zinc-100
+				 text-sm font-medium text-gray-400 hover:border-gray-500
+				hover:text-gray-500 active:border-gray-800 active:text-gray-800 md:aspect-10/3"
+				>
+					<div class="flex flex-col items-center">
+						<ImagePlus size="24" strokeWidth="1.5" />
+						<h2>Banner</h2>
+					</div>
+
+					<div
+						class="absolute -top-8 left-1/2 hidden w-fit -translate-x-1/2 rounded-lg border border-gray-500 bg-zinc-900 px-1.5 py-1 text-center text-xs text-nowrap text-gray-50 transition-all duration-150 ease-in group-hover:flex"
+					>
+						Add Banner
+					</div>
+				</section>
+			</AddHeroImage>
+		{:else}
+			<img
+				src="https://d3p3fw3rutb1if.cloudfront.net/photos/c010380a-8595-45ad-8e1f-b17af6d93df2"
+				alt="bg_image"
+				class="aspect-10/4 w-full rounded-2xl object-cover md:aspect-10/3"
+			/>
+		{/if}
+
 		<div class="relative">
 			{#if true}
-				<AddProfileImage>
+				<AddProfileImage {form}>
 					<section
 						class="group absolute right-0 flex aspect-square size-20 -translate-x-1/2 translate-y-[-80%] cursor-pointer flex-col items-center justify-center
 					    gap-1 rounded-2xl border-2 border-dashed border-gray-400 bg-gray-100 object-cover text-sm font-medium text-gray-400 hover:border-gray-500 hover:text-gray-500 active:border-gray-800 active:text-gray-800 md:size-25"
@@ -55,7 +80,7 @@
 						<ImagePlus size="24" strokeWidth="1.5" />
 						<h2>Profile</h2>
 						<div
-							class="absolute -top-8 right-3 hidden w-fit rounded-lg border border-gray-500 bg-zinc-900 px-1.5 py-1 text-center text-xs text-gray-50 transition-all duration-150 ease-in group-hover:flex"
+							class="absolute -top-8 left-1/2 hidden w-fit -translate-x-1/2 rounded-lg border border-gray-500 bg-zinc-900 px-1.5 py-1 text-center text-xs text-nowrap text-gray-50 transition-all duration-150 ease-in group-hover:flex"
 						>
 							Add Profile
 						</div>
@@ -66,7 +91,7 @@
 					src="https://framerusercontent.com/images/GPMWO2lffxJQOSExK7qFWyv6M.jpg?width=200"
 					alt="temp_profile_img"
 					class="absolute right-0 aspect-square size-20 -translate-x-1/2 translate-y-[-80%] rounded-2xl
-		border-2 border-gray-50 bg-gray-50 object-cover md:size-25"
+					border-2 border-gray-50 bg-gray-50 object-cover md:size-25"
 				/>
 			{/if}
 		</div>
@@ -74,18 +99,18 @@
 			<div>
 				<div class="flex items-center gap-2.5">
 					<EditNameDialog>
-						<EditBox text="Update Display Name">
+						<EditBox top="-top-[calc(100%+4px)]" text="Update Display Name">
 							<h1 class="text-lg font-bold">Gyan Ashish Ekka</h1>
 						</EditBox>
 					</EditNameDialog>
 					<EditUsernameDialog>
-						<EditBox text="Update Username">
+						<EditBox top="-top-[calc(100%+12px)]" text="Update Username">
 							<h2 class="  text-gray-500">@ekkoish</h2>
 						</EditBox>
 					</EditUsernameDialog>
 				</div>
 				<EditBioDialog>
-					<EditBox text="Update Bio">
+					<EditBox top="-top-[calc(100%+12px)]" text="Update Bio">
 						<p>
 							We make shopping grocerries online fun! Best part is you get to learn what you are
 							eating.
@@ -101,7 +126,7 @@
 							href={resolve(`/dashboard/my-page/${link}`)}
 							class="group flex w-full items-center justify-between rounded-2xl border
 								border-gray-300 bg-[#E0DED9]/30 px-4 py-3 transition-all duration-75 ease-in hover:border-gray-500
-							hover:bg-white active:-translate-y-1 active:scale-[0.99]"
+							hover:bg-white active:-translate-y-1 active:scale-[0.99] active:border-gray-800"
 						>
 							<div class="grid">
 								<h1 class=" font-medium">{link} mins meeting</h1>

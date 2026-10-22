@@ -128,7 +128,6 @@
 						<!-- Header -->
 						<header class="flex w-full shrink-0 items-center justify-between pb-4">
 							<h2 class="text-base font-semibold">Crop Image</h2>
-							<Button variant="secondary" onClick={cancelCrop}>Cancel</Button>
 						</header>
 
 						<!-- Cropper area -->
@@ -147,40 +146,38 @@
 						<footer
 							class="relative z-10 flex w-full shrink-0 flex-col items-center justify-center gap-4 p-4 md:flex-row"
 						>
-							<div class="flex items-center gap-4">
-								<ZoomOutIcon size="20" class="text-gray-500" strokeWidth="2" />
-								<Slider.Root
-									type="single"
-									min={1}
-									max={3}
-									step={0.01}
-									bind:value={zoom}
-									class="relative flex w-64 max-w-full touch-none items-center select-none"
+							<ZoomOutIcon size="20" class="text-gray-500" strokeWidth="2" />
+							<Slider.Root
+								type="single"
+								min={1}
+								max={3}
+								step={0.01}
+								bind:value={zoom}
+								class="relative flex w-64 max-w-full touch-none items-center select-none"
+							>
+								<span
+									class="relative h-2 w-full grow cursor-pointer overflow-hidden rounded-full bg-dark-10"
 								>
-									<span
-										class="relative h-2 w-full grow cursor-pointer overflow-hidden rounded-full bg-dark-10"
-									>
-										<Slider.Range class="absolute h-full bg-blue-400" />
-									</span>
-									<Slider.Thumb
-										index={0}
-										class="block size-5 cursor-pointer rounded-full border border-gray-500 bg-white shadow-sm transition-colors hover:border-dark-40
+									<Slider.Range class="absolute h-full bg-blue-400" />
+								</span>
+								<Slider.Thumb
+									index={0}
+									class="block size-5 cursor-pointer rounded-full border border-gray-500 bg-white shadow-sm transition-colors hover:border-dark-40
 								    focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:outline-hidden disabled:pointer-events-none
 									disabled:opacity-50 data-active:scale-[0.98] data-active:border-dark-40 dark:bg-foreground dark:shadow-card"
-									/>
-								</Slider.Root>
-								<ZoomInIcon size="20" class="text-gray-500" strokeWidth="2" />
-							</div>
-
-							<div class="right-0 flex w-full justify-end md:absolute md:w-fit">
-								<Button onClick={applyCrop}>
-									<div class="flex items-center gap-1">
-										<CropIcon size="16" strokeWidth="2" />
-										<h2>Crop</h2>
-									</div>
-								</Button>
-							</div>
+								/>
+							</Slider.Root>
+							<ZoomInIcon size="20" class="text-gray-500" strokeWidth="2" />
 						</footer>
+						<div class="grid w-70 grid-cols-2 gap-1">
+							<Button variant="secondary" onClick={cancelCrop}>Cancel</Button>
+							<Button onClick={applyCrop}>
+								<div class="flex items-center justify-center gap-1">
+									<CropIcon size="16" strokeWidth="2" />
+									<h2>Crop</h2>
+								</div>
+							</Button>
+						</div>
 					</div>
 				{:else if previewUrl}
 					<div
@@ -251,12 +248,14 @@
 				<input bind:this={fileInput} type="file" name="croppedImage" class="hidden" />
 				<AlertDialog.Cancel>
 					<button
-						class="black_btn cursor-pointer rounded-lg px-2 py-1.5 text-sm transition-colors"
-						type="submit"
-						disabled={!hasCroppedFile}>Save</button
+						class="black_btn cursor-pointer rounded-lg px-2 py-1.5 text-sm transition-colors
+						{!isModalOpen && imageSrc && previewUrl && hasCroppedFile ? 'block' : 'hidden'}
+							"
+						type="submit">Save</button
 					>
 				</AlertDialog.Cancel>
 			</form>
+
 			<AlertDialog.Cancel
 				class="absolute top-5 right-5 cursor-pointer rounded-md   hover:bg-gray-200
 				focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2

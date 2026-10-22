@@ -28,4 +28,3 @@ test-results
 # Testing and Work-in-progress Dirs.
 src/routes/api/test/delete_users/
 src/routes/test/
-src/lib/server/db/schema/booking_page.ts

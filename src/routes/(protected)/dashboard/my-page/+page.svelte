@@ -56,7 +56,8 @@
 					</div>
 
 					<div
-						class="absolute -top-8 left-1/2 hidden w-fit -translate-x-1/2 rounded-lg border border-gray-500 bg-zinc-900 px-1.5 py-1 text-center text-xs text-nowrap text-gray-50 transition-all duration-150 ease-in group-hover:flex"
+						class="absolute -top-8 left-1/2 hidden w-fit -translate-x-1/2 rounded-lg border border-gray-500 bg-zinc-900
+						px-1.5 py-1 text-center text-xs text-nowrap text-gray-50 transition-all duration-150 ease-in group-hover:flex"
 					>
 						Add Banner
 					</div>

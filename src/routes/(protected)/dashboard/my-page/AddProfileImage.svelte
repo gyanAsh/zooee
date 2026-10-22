@@ -1,17 +1,17 @@
 <script lang="ts">
-	import { ImagePlus, Trash, Upload, X } from '@lucide/svelte';
+	import { ImagePlus, Trash, Upload, X, ZoomInIcon, ZoomOutIcon } from '@lucide/svelte';
 	import { AlertDialog } from 'bits-ui';
 	const { children, form } = $props();
 
-	import Cropper from 'svelte-easy-crop';
 	import { enhance } from '$app/forms';
+	import Cropper from '$lib/client/components/Cropper/Cropper.svelte';
 
 	// --- State ---
 	let imageSrc = $state<string | null>(null);
 	let isModalOpen = $state(false);
 	let crop = $state({ x: 0, y: 0 });
-	let zoom = $state(1);
-	const ASPECT_RATIO = 10 / 3; // Change to 1 for avatars
+	let zoom = $state(1.5);
+	const ASPECT_RATIO = 1; // Change to 1 for avatars
 	let croppedPixels = $state({ x: 0, y: 0, width: 0, height: 0 });
 	let previewUrl = $state<string | null>(null);
 	let fileInput = $state<HTMLInputElement | null>(null);
@@ -35,6 +35,7 @@
 
 	// --- Crop Callback ---
 	function handleCropComplete(detail: { pixels: typeof croppedPixels }) {
+		console.log({ detail });
 		croppedPixels = detail.pixels;
 	}
 
@@ -121,10 +122,10 @@
 			<AlertDialog.Description class="text-sm text-foreground-alt">
 				Upload a photo to help clients and guests recognize you on your booking pages.
 			</AlertDialog.Description>
-			<div class="flex flex-col items-start py-5">
+			<div class="flex flex-col items-center py-5">
 				{#if isModalOpen && imageSrc}
 					<div
-						class="flex h-[min(50vh,600px)] w-full flex-col overflow-hidden rounded-2xl bg-[#15202b] text-white shadow-2xl"
+						class="flex h-[min(50vh,600px)] w-auto flex-col overflow-hidden rounded-2xl bg-[#15202b] text-white shadow-2xl"
 					>
 						<!-- Header -->
 						<header
@@ -145,8 +146,8 @@
 							</button>
 						</header>
 
-						<!-- Cropper -->
-						<div class="relative flex-1 bg-black">
+						<!-- Cropper area -->
+						<div class="relative w-full flex-1 bg-black">
 							<Cropper
 								image={imageSrc}
 								bind:crop
@@ -158,24 +159,23 @@
 						</div>
 
 						<!-- Footer -->
-						<footer class="flex shrink-0 items-center gap-3 border-t border-[#38444d] px-4 py-3">
-							<label for="zoom-slider" class="text-sm text-gray-300">Zoom</label>
+						<footer class="z-10 flex shrink-0 items-center justify-center gap-4 bg-[#000000] p-4">
+							<ZoomOutIcon size="16" strokeWidth="2.5" />
 							<input
-								id="zoom-slider"
 								type="range"
 								min="1"
 								max="3"
-								step="0.1"
+								step="0.01"
 								bind:value={zoom}
-								class="flex-1 accent-[#1d9bf0]"
+								class="h-1 w-64 max-w-full cursor-pointer appearance-none rounded-full bg-neutral-800 accent-white"
 							/>
+							<ZoomInIcon size="16" strokeWidth="2.5" />
 						</footer>
 					</div>
 				{:else if previewUrl}
 					<div
-						class="  relative grid aspect-10/3 w-full place-items-center overflow-hidden rounded-lg bg-gray-200
-    				text-sm font-medium transition-colors focus:border-blue-500
-    				focus:ring-1 focus:ring-transparent focus:outline-none"
+						class="relative grid aspect-square w-full place-items-center overflow-hidden rounded-lg bg-black text-sm
+    				font-medium transition-colors md:w-75"
 					>
 						<img src={previewUrl} alt="Cropped preview" class="block h-auto w-full" />
 						<section class="absolute flex items-center gap-1.5">
@@ -185,7 +185,6 @@
 						    text-sm text-black transition-all duration-75 ease-in hover:bg-blue-300 hover:text-gray-800"
 							>
 								<ImagePlus size="16" strokeWidth="2" />
-								<h2>Upload</h2>
 							</label>
 							<button
 								type="button"
@@ -199,16 +198,12 @@
 						</section>
 					</div>
 				{:else}
-					<div class="relative w-full">
+					<div class="relative flex w-full items-center justify-center">
 						<label
 							for="file-input"
 							id="upload_image_id"
-							class="group grid aspect-10/3 w-full cursor-pointer place-items-center rounded-lg border border-dashed
-						border-gray-400
-						bg-gray-200 px-2.5
-						py-1.5 text-sm
-						font-medium transition-colors focus:border-blue-500 focus:ring-1
-						focus:ring-transparent focus:outline-none"
+							class="group grid aspect-square w-full cursor-pointer place-items-center rounded-lg border border-dashed border-gray-400
+						bg-gray-200 px-2.5 py-1.5 text-sm font-medium transition-colors hover:border-gray-800 md:w-75"
 						>
 							<div class="grid place-items-center gap-2.5">
 								<div
@@ -265,4 +260,3 @@
 		</AlertDialog.Content>
 	</AlertDialog.Portal>
 </AlertDialog.Root>
-<!-- Modal Overlay -->

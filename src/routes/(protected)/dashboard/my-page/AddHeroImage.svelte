@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { ImagePlus, Trash, Upload, X } from '@lucide/svelte';
+	import { ImagePlus, Trash, Upload, X, ZoomInIcon, ZoomOutIcon } from '@lucide/svelte';
 	import { AlertDialog } from 'bits-ui';
 	const { children, form } = $props();
 
-	import Cropper from 'svelte-easy-crop';
+	import Cropper from '$lib/client/components/Cropper/Cropper.svelte';
 	import { enhance } from '$app/forms';
 
 	// --- State ---
@@ -158,24 +158,23 @@
 						</div>
 
 						<!-- Footer -->
-						<footer class="flex shrink-0 items-center gap-3 border-t border-[#38444d] px-4 py-3">
-							<label for="zoom-slider" class="text-sm text-gray-300">Zoom</label>
+						<footer class="z-10 flex shrink-0 items-center justify-center gap-4 bg-[#000000] p-4">
+							<ZoomOutIcon size="16" strokeWidth="2.5" />
 							<input
-								id="zoom-slider"
 								type="range"
 								min="1"
 								max="3"
-								step="0.1"
+								step="0.01"
 								bind:value={zoom}
-								class="flex-1 accent-[#1d9bf0]"
+								class="h-1 w-64 max-w-full cursor-pointer appearance-none rounded-full bg-neutral-800 accent-white"
 							/>
+							<ZoomInIcon size="16" strokeWidth="2.5" />
 						</footer>
 					</div>
 				{:else if previewUrl}
 					<div
-						class="  relative grid aspect-10/3 w-full place-items-center overflow-hidden rounded-lg bg-gray-200
-    				text-sm font-medium transition-colors focus:border-blue-500
-    				focus:ring-1 focus:ring-transparent focus:outline-none"
+						class="relative grid aspect-10/3 w-full place-items-center overflow-hidden rounded-lg bg-black
+    				text-sm font-medium transition-colors"
 					>
 						<img src={previewUrl} alt="Cropped preview" class="block h-auto w-full" />
 						<section class="absolute flex items-center gap-1.5">
@@ -185,7 +184,6 @@
 						    text-sm text-black transition-all duration-75 ease-in hover:bg-blue-300 hover:text-gray-800"
 							>
 								<ImagePlus size="16" strokeWidth="2" />
-								<h2>Upload</h2>
 							</label>
 							<button
 								type="button"
@@ -199,35 +197,29 @@
 						</section>
 					</div>
 				{:else}
-					<div class="relative w-full">
-						<label
-							for="file-input"
-							id="upload_image_id"
-							class="group grid aspect-10/3 w-full cursor-pointer place-items-center rounded-lg border border-dashed
-						border-gray-400
-						bg-gray-200 px-2.5
-						py-1.5 text-sm
-						font-medium transition-colors focus:border-blue-500 focus:ring-1
-						focus:ring-transparent focus:outline-none"
-						>
-							<div class="grid place-items-center gap-2.5">
-								<div
-									class="flex items-center gap-1 rounded-lg border border-zinc-700 bg-zinc-700 px-2 py-1.5 text-white
+					<label
+						for="file-input"
+						id="upload_image_id"
+						class="group grid aspect-10/3 w-full cursor-pointer place-items-center rounded-lg border border-dashed border-gray-400
+						bg-gray-200 px-2.5 py-1.5 text-sm font-medium transition-colors hover:border-gray-800"
+					>
+						<div class="grid place-items-center gap-2.5">
+							<div
+								class="flex items-center gap-1 rounded-lg border border-zinc-700 bg-zinc-700 px-2 py-1.5 text-white
 							    transition-all duration-75 ease-in group-hover:bg-black group-hover:text-gray-50"
-								>
-									<Upload size="14" strokeWidth="2" />
-									<h2>Upload</h2>
-								</div>
-
-								<section class="grid place-items-center">
-									<h1 class="text-sm">Choose a file or drag & drop it here</h1>
-									<h2 class="text-xs font-normal text-gray-500">
-										1468×440px. JPG, PNG, or WEBP (Max 5MB)
-									</h2>
-								</section>
+							>
+								<Upload size="14" strokeWidth="2" />
+								<h2>Upload</h2>
 							</div>
-						</label>
-					</div>
+
+							<section class="grid place-items-center">
+								<h1 class="text-sm">Choose a file or drag & drop it here</h1>
+								<h2 class="text-xs font-normal text-gray-500">
+									1468×440px. JPG, PNG, or WEBP (Max 5MB)
+								</h2>
+							</section>
+						</div>
+					</label>
 				{/if}
 
 				<input

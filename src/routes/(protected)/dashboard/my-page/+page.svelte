@@ -12,6 +12,7 @@
 	import AddHeroImage from './AddHeroImage.svelte';
 	const links = [15, 20, 30];
 	let { form } = $props();
+	let showbtns = $state(true);
 </script>
 
 <!-- style="background: radial-gradient(125% 125% at 50% 0%, #fff 40%, #475569 100%);" -->
@@ -20,9 +21,11 @@
 	in:fly={{ y: -10, duration: 130, easing: cubicOut }}
 >
 	<section
-		class="absolute top-0 flex h-fit w-fit items-center justify-center gap-2.5 rounded-b-2xl border-x border-b bg-gray-50 p-2"
+		class=" top-0 flex h-fit w-fit items-center justify-center gap-2.5 rounded-b-2xl border-x border-b bg-gray-50 p-2 {!showbtns
+			? 'hidden'
+			: 'absolute'}"
 	>
-		<Button variant="secondary">
+		<Button variant="secondary" onClick={() => (showbtns = !showbtns)}>
 			<!-- class="inline-flex cursor-pointer items-center justify-center gap-1 rounded-lg bg-blue-500 px-2 py-1.5 text-xs font-medium text-gray-50" -->
 			<div class="inline-flex items-center justify-center gap-1 text-sm font-medium">
 				<PencilSparkles size="14" strokeWidth="2" />

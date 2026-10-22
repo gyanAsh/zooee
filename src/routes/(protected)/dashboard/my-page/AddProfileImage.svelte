@@ -1,10 +1,11 @@
 <script lang="ts">
-	import { ImagePlus, Trash, Upload, X, ZoomInIcon, ZoomOutIcon } from '@lucide/svelte';
-	import { AlertDialog } from 'bits-ui';
+	import { CropIcon, ImagePlus, Trash, Upload, X, ZoomInIcon, ZoomOutIcon } from '@lucide/svelte';
+	import { AlertDialog, Slider } from 'bits-ui';
 	const { children, form } = $props();
 
 	import { enhance } from '$app/forms';
 	import Cropper from '$lib/client/components/Cropper/Cropper.svelte';
+	import Button from '$lib/client/components/ui/button.svelte';
 
 	// --- State ---
 	let imageSrc = $state<string | null>(null);
@@ -35,7 +36,6 @@
 
 	// --- Crop Callback ---
 	function handleCropComplete(detail: { pixels: typeof croppedPixels }) {
-		console.log({ detail });
 		croppedPixels = detail.pixels;
 	}
 
@@ -124,30 +124,15 @@
 			</AlertDialog.Description>
 			<div class="flex flex-col items-center py-5">
 				{#if isModalOpen && imageSrc}
-					<div
-						class="flex h-[min(50vh,600px)] w-auto flex-col overflow-hidden rounded-2xl bg-[#15202b] text-white shadow-2xl"
-					>
+					<div class="flex h-[min(50vh,600px)] w-full flex-col items-center overflow-hidden">
 						<!-- Header -->
-						<header
-							class="flex shrink-0 items-center justify-between border-b border-[#38444d] px-4 py-3"
-						>
-							<button
-								onclick={cancelCrop}
-								class="rounded-full px-3 py-1.5 text-sm transition-colors hover:bg-white/10"
-							>
-								Cancel
-							</button>
-							<h2 class="text-base font-semibold">Crop your image</h2>
-							<button
-								onclick={applyCrop}
-								class="rounded-full bg-[#1d9bf0] px-4 py-1.5 text-sm font-semibold transition-colors hover:bg-[#1a8cd8]"
-							>
-								Apply
-							</button>
+						<header class="flex w-full shrink-0 items-center justify-between pb-4">
+							<h2 class="text-base font-semibold">Crop Image</h2>
+							<Button variant="secondary" onClick={cancelCrop}>Cancel</Button>
 						</header>
 
 						<!-- Cropper area -->
-						<div class="relative w-full flex-1 bg-black">
+						<div class="relative aspect-square w-75 flex-1 bg-black">
 							<Cropper
 								image={imageSrc}
 								bind:crop
@@ -159,17 +144,42 @@
 						</div>
 
 						<!-- Footer -->
-						<footer class="z-10 flex shrink-0 items-center justify-center gap-4 bg-[#000000] p-4">
-							<ZoomOutIcon size="16" strokeWidth="2.5" />
-							<input
-								type="range"
-								min="1"
-								max="3"
-								step="0.01"
-								bind:value={zoom}
-								class="h-1 w-64 max-w-full cursor-pointer appearance-none rounded-full bg-neutral-800 accent-white"
-							/>
-							<ZoomInIcon size="16" strokeWidth="2.5" />
+						<footer
+							class="relative z-10 flex w-full shrink-0 flex-col items-center justify-center gap-4 p-4 md:flex-row"
+						>
+							<div class="flex items-center gap-4">
+								<ZoomOutIcon size="20" class="text-gray-500" strokeWidth="2" />
+								<Slider.Root
+									type="single"
+									min={1}
+									max={3}
+									step={0.01}
+									bind:value={zoom}
+									class="relative flex w-64 max-w-full touch-none items-center select-none"
+								>
+									<span
+										class="relative h-2 w-full grow cursor-pointer overflow-hidden rounded-full bg-dark-10"
+									>
+										<Slider.Range class="absolute h-full bg-blue-400" />
+									</span>
+									<Slider.Thumb
+										index={0}
+										class="block size-5 cursor-pointer rounded-full border border-gray-500 bg-white shadow-sm transition-colors hover:border-dark-40
+								    focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:outline-hidden disabled:pointer-events-none
+									disabled:opacity-50 data-active:scale-[0.98] data-active:border-dark-40 dark:bg-foreground dark:shadow-card"
+									/>
+								</Slider.Root>
+								<ZoomInIcon size="20" class="text-gray-500" strokeWidth="2" />
+							</div>
+
+							<div class="right-0 flex w-full justify-end md:absolute md:w-fit">
+								<Button onClick={applyCrop}>
+									<div class="flex items-center gap-1">
+										<CropIcon size="16" strokeWidth="2" />
+										<h2>Crop</h2>
+									</div>
+								</Button>
+							</div>
 						</footer>
 					</div>
 				{:else if previewUrl}
@@ -181,8 +191,8 @@
 						<section class="absolute flex items-center gap-1.5">
 							<label
 								for="file-input"
-								class="flex items-center gap-1 rounded-lg border border-zinc-700 bg-white px-2 py-1.5
-						    text-sm text-black transition-all duration-75 ease-in hover:bg-blue-300 hover:text-gray-800"
+								class="flex cursor-pointer items-center gap-1 rounded-lg border border-zinc-700 bg-gray-100 px-2
+						    py-1.5 text-sm text-gray-500 transition-all duration-75 ease-in hover:bg-blue-500/80 hover:text-gray-50"
 							>
 								<ImagePlus size="16" strokeWidth="2" />
 							</label>
@@ -190,8 +200,8 @@
 								type="button"
 								onclick={cancelCrop}
 								disabled={!fileInput}
-								class="flex items-center gap-1 rounded-lg border border-zinc-700 bg-black px-2 py-1.5
-						    text-white transition-all duration-75 ease-in hover:bg-red-300 hover:text-gray-800"
+								class="flex cursor-pointer items-center gap-1 rounded-lg border border-zinc-700 bg-black px-2 py-1.5
+						    text-white transition-all duration-75 ease-in hover:bg-red-500/80 hover:text-gray-800"
 							>
 								<Trash size="16" strokeWidth="2" />
 							</button>

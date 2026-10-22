@@ -1,12 +1,18 @@
 <script lang="ts">
 	import { Button } from 'bits-ui';
 
-	const { children, isActive = false, variant = 'primary', onClick = () => {} } = $props();
+	const {
+		classtyle = '',
+		children,
+		isActive = false,
+		variant = 'primary',
+		onClick = () => {}
+	} = $props();
 </script>
 
 <Button.Root
 	onclick={() => onClick()}
-	class="cursor-pointer rounded-lg px-2 py-1.5 text-sm transition-colors
+	class="cursor-pointer {classtyle} rounded-lg px-2 py-1.5 text-sm transition-colors
 		{variant === 'primary'
 		? 'primary_btn'
 		: variant === 'secondary'

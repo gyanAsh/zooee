@@ -12,7 +12,7 @@ export const booking_page_table = pgTable(
 		username: varchar('username', { length: 30 }).notNull().unique(),
 		bio: varchar('bio', { length: 160 }),
 		user_image_url: text('user_image'),
-		banner_url: text('user_image'),
+		banner_url: text('banner_image'),
 		created_at: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
 		updated_at: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow()
 	},

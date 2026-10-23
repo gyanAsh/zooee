@@ -23,3 +23,14 @@ export const getUserById = async ({ id }: { id: string }) => {
 		where: (users) => eq(users.id, id)
 	});
 };
+
+// ------------------------UPDATE--------------------------
+export const updateUserName = async ({ id, name }: { id: string; name: string }) => {
+	const [user] = await db
+		.update(users_table)
+		.set({ name, updatedAt: new Date() })
+		.where(eq(users_table.id, id))
+		.returning();
+
+	return user;
+};

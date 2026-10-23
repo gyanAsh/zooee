@@ -1,9 +1,23 @@
-<script>
+<script lang="ts">
+	import { enhance } from '$app/forms';
 	import Button from '$lib/client/components/ui/button.svelte';
+	import { bioSchema } from '$lib/validation-schemas/booking-page.js';
 	import { X } from '@lucide/svelte';
 	import { Dialog } from 'bits-ui';
-	const { children } = $props();
-	let submitting = $state();
+	import type { Snippet } from 'svelte';
+	const { children, defaultValue = '' }: { defaultValue?: string; children: Snippet } = $props();
+	let submitting = $state(false);
+	let bio_value = $derived(defaultValue);
+
+	let bioError = $state<string | null>(null);
+
+	function validateBio(event: Event) {
+		bioError = '';
+		const input = event.target as HTMLInputElement;
+		const result = bioSchema.safeParse(input.value);
+		bioError = result.success ? null : (result.error.issues[0]?.message ?? 'Invalid name');
+	}
+	let isSame = $derived(bio_value === defaultValue);
 </script>
 
 <Dialog.Root>
@@ -13,8 +27,7 @@
 	<Dialog.Portal>
 		<Dialog.Overlay
 			class="data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0
-			data-[state=open]:fade-in-0 fixed inset-0
-            z-50 bg-black/80"
+			data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/80"
 		/>
 		<Dialog.Content
 			class="data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0
@@ -30,23 +43,39 @@
 			<Dialog.Description class="text-sm text-foreground-alt">
 				Add a brief description about yourself to help people know who they are booking with.
 			</Dialog.Description>
-			<div class="flex flex-col items-start py-5">
-				<div class="relative w-full">
-					<textarea
-						id="bio_id"
-						class="max-h-42 min-h-28 w-full rounded-lg border-2 border-gray-600 px-2.5 py-1.5 font-medium
-						{submitting ? 'opacity-70' : ''}
-						text-sm transition-colors focus:border-blue-500 focus:ring-1
-						focus:ring-transparent focus:outline-none"
-						placeholder="Your bio"
-						name="bio"></textarea>
+			<form method="POST" action="?/update_bio" use:enhance>
+				<div class="flex flex-col items-start py-5">
+					<div class="relative w-full">
+						<textarea
+							id="bio_id"
+							class="max-h-42 min-h-28 w-full rounded-lg border-2 border-gray-600 px-2.5 py-1.5 font-medium
+    						{submitting ? 'opacity-70' : ''}
+    						text-sm transition-colors focus:border-blue-500 focus:ring-1
+    						focus:ring-transparent focus:outline-none"
+							placeholder="Your bio"
+							bind:value={bio_value}
+							oninput={validateBio}
+							disabled={submitting}
+							name="bio"></textarea>
+						{#if !!bioError}
+							<p
+								class="absolute -bottom-2.5 left-0 translate-y-full text-xs font-medium text-red-500"
+							>
+								* {bioError}
+							</p>
+						{/if}
+					</div>
 				</div>
-			</div>
-			<div class="flex w-full justify-end">
-				<Dialog.Close>
-					<Button variant="black">Save</Button>
-				</Dialog.Close>
-			</div>
+				<div class="flex w-full justify-end">
+					{#if !!bioError || isSame}
+						<Dialog.Close>
+							<Button variant="ghost">Close</Button>
+						</Dialog.Close>
+					{:else}
+						<Button type="submit" variant="primary">Update</Button>
+					{/if}
+				</div>
+			</form>
 			<Dialog.Close
 				class="absolute top-5 right-5 cursor-pointer rounded-md   hover:bg-gray-200
 				focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2

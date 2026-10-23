@@ -1,9 +1,26 @@
-<script>
+<script lang="ts">
+	import { enhance } from '$app/forms';
 	import Button from '$lib/client/components/ui/button.svelte';
+	import { usernameSchema } from '$lib/validation-schemas/booking-page.js';
 	import { X } from '@lucide/svelte';
 	import { Dialog } from 'bits-ui';
-	const { children } = $props();
-	let submitting = $state();
+	import type { Snippet } from 'svelte';
+	const { children, defaultValue = '' }: { defaultValue?: string; children: Snippet } = $props();
+
+	let submitting = $state(false);
+
+	let username_value = $derived(defaultValue);
+
+	let usernameError = $state<string | null>(null);
+
+	function validateUsername(event: Event) {
+		usernameError = '';
+		const input = event.target as HTMLInputElement;
+		const result = usernameSchema.safeParse(input.value);
+		usernameError = result.success ? null : (result.error.issues[0]?.message ?? 'Invalid name');
+	}
+
+	let isSame = $derived(username_value === defaultValue);
 </script>
 
 <Dialog.Root>
@@ -29,27 +46,44 @@
 			</Dialog.Title>
 			<Dialog.Description class="text-sm text-foreground-alt">
 				This forms your personal booking link <span
-					class="bg-[#E0DED9] px-2 font-medium text-gray-900">https://zooee.com/username</span
+					class="bg-[#E0DED9] px-2 font-medium text-gray-900">https://zooee.com/{defaultValue}</span
 				> and identifies your account
 			</Dialog.Description>
-			<div class="flex flex-col items-start py-5">
-				<div class="relative w-full">
-					<input
-						id="username_id"
-						class="w-full rounded-lg border-2 border-gray-600 px-2.5 py-1.5 font-medium
-						{submitting ? 'opacity-70' : ''}
-						text-sm transition-colors focus:border-blue-500 focus:ring-1
-						focus:ring-transparent focus:outline-none"
-						placeholder="Your username"
-						name="username"
-					/>
+			<form method="POST" action="?/update_username" use:enhance>
+				<div class="flex flex-col items-start py-5">
+					<div class="relative w-full">
+						<input
+							id="username_id"
+							class="w-full rounded-lg border-2 px-2.5 py-1.5 font-bold
+							{usernameError ? 'border-red-400' : 'border-gray-600 '}
+    						{submitting ? 'opacity-70' : ''}
+    						text-sm transition-colors focus:border-blue-500 focus:ring-1
+    						focus:ring-transparent focus:outline-none"
+							placeholder="Your username"
+							bind:value={username_value}
+							oninput={validateUsername}
+							disabled={submitting}
+							name="username"
+						/>
+						{#if !!usernameError}
+							<p
+								class="absolute -bottom-2.5 left-0 translate-y-full text-xs font-medium text-red-500"
+							>
+								* {usernameError}
+							</p>
+						{/if}
+					</div>
 				</div>
-			</div>
-			<div class="flex w-full justify-end">
-				<Dialog.Close>
-					<Button variant="black">Save</Button>
-				</Dialog.Close>
-			</div>
+				<div class="flex w-full justify-end">
+					{#if !!usernameError || isSame}
+						<Dialog.Close>
+							<Button variant="ghost">Close</Button>
+						</Dialog.Close>
+					{:else}
+						<Button type="submit" variant="primary">Update</Button>
+					{/if}
+				</div>
+			</form>
 			<Dialog.Close
 				class="absolute top-5 right-5 cursor-pointer rounded-md   hover:bg-gray-200
 				focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2

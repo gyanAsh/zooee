@@ -1,5 +1,14 @@
 <script lang="ts">
-	import { CropIcon, ImagePlus, Trash, Upload, X, ZoomInIcon, ZoomOutIcon } from '@lucide/svelte';
+	import {
+		CircleAlert,
+		CropIcon,
+		ImagePlus,
+		Trash,
+		Upload,
+		X,
+		ZoomInIcon,
+		ZoomOutIcon
+	} from '@lucide/svelte';
 	import { AlertDialog, Slider } from 'bits-ui';
 	const { children, form } = $props();
 
@@ -243,19 +252,26 @@
 				{#if form?.message}
 					<p class={form.success ? 'text-green-500' : 'text-red-500'}>{form.message}</p>
 				{/if}
+				{#if form && !form.success}
+					<div
+						class="flex items-center gap-2 rounded-lg border border-red-300 bg-red-50 px-2 py-1.5 text-red-700"
+						role="alert"
+					>
+						<CircleAlert size="16" strokeWidth="2" class="shrink-0" />
+						<span class="font-medium">{form.message}</span>
+					</div>
+				{/if}
 			</div>
 			<form method="POST" enctype="multipart/form-data" use:enhance class="flex w-full justify-end">
 				<input bind:this={fileInput} type="file" name="croppedImage" class="hidden" />
 				<AlertDialog.Cancel>
 					<button
 						class="black_btn cursor-pointer rounded-lg px-2 py-1.5 text-sm transition-colors
-						{!isModalOpen && imageSrc && previewUrl && hasCroppedFile ? 'block' : 'hidden'}
-							"
+						{!isModalOpen && imageSrc && previewUrl && hasCroppedFile ? 'block' : 'hidden'}"
 						type="submit">Save</button
 					>
 				</AlertDialog.Cancel>
 			</form>
-
 			<AlertDialog.Cancel
 				class="absolute top-5 right-5 cursor-pointer rounded-md   hover:bg-gray-200
 				focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2

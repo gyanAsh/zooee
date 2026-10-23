@@ -26,5 +26,5 @@ vite.config.ts.timestamp-*
 test-results
 
 # Testing and Work-in-progress Dirs.
-src/routes/api/test/delete_users/
-src/routes/test/
+src/routes/api/test/*
+src/routes/test/*

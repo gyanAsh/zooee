@@ -1,18 +1,28 @@
 <script lang="ts">
 	import { Button } from 'bits-ui';
-
+	import type { Snippet } from 'svelte';
+	interface Props {
+		class?: string;
+		type?: 'button' | 'submit' | 'reset';
+		children: Snippet; // or Snippet
+		isActive?: boolean;
+		variant?: 'primary' | 'secondary' | 'black' | 'ghost';
+		onClick?: (e: MouseEvent) => void;
+	}
 	const {
-		classtyle = '',
+		class: className = '',
+		type = 'button',
 		children,
 		isActive = false,
 		variant = 'primary',
 		onClick = () => {}
-	} = $props();
+	}: Props = $props();
 </script>
 
 <Button.Root
-	onclick={() => onClick()}
-	class="cursor-pointer {classtyle} rounded-lg px-2 py-1.5 text-sm transition-colors
+	{type}
+	onclick={onClick}
+	class="cursor-pointer {className} rounded-lg px-2 py-1.5 text-sm transition-colors
 		{variant === 'primary'
 		? 'primary_btn'
 		: variant === 'secondary'

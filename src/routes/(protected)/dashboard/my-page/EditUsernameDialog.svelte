@@ -2,11 +2,26 @@
 	import { enhance } from '$app/forms';
 	import Button from '$lib/client/components/ui/button.svelte';
 	import { usernameSchema } from '$lib/validation-schemas/booking-page.js';
-	import { X } from '@lucide/svelte';
+	import { CircleAlert, CircleCheck, X } from '@lucide/svelte';
 	import { Dialog } from 'bits-ui';
 	import type { Snippet } from 'svelte';
-	const { children, defaultValue = '' }: { defaultValue?: string; children: Snippet } = $props();
+	import type { ActionData } from './$types.js';
+	import { fly } from 'svelte/transition';
+	import { cubicIn, cubicOut } from 'svelte/easing';
 
+	const {
+		children,
+		defaultValue = '',
+		form,
+		alert
+	}: {
+		defaultValue?: string;
+		children: Snippet;
+		form: ActionData;
+		alert: {
+			message: string;
+		} | null;
+	} = $props();
 	let submitting = $state(false);
 
 	let username_value = $derived(defaultValue);
@@ -44,7 +59,7 @@
 			>
 				Edit Username Name
 			</Dialog.Title>
-			<Dialog.Description class="text-sm text-foreground-alt">
+			<Dialog.Description class=" relative mb-3 text-sm text-foreground-alt">
 				This forms your personal booking link <span
 					class="bg-[#E0DED9] px-2 font-medium text-gray-900">https://zooee.com/{defaultValue}</span
 				> and identifies your account
@@ -65,13 +80,30 @@
 							disabled={submitting}
 							name="username"
 						/>
-						{#if !!usernameError}
-							<p
-								class="absolute -bottom-2.5 left-0 translate-y-full text-xs font-medium text-red-500"
-							>
-								* {usernameError}
-							</p>
-						{/if}
+						<div class="absolute -bottom-2.5 left-0 translate-y-full text-xs font-medium">
+							{#if form && alert && form.type === 'username'}
+								<span
+									in:fly={{ y: -10, duration: 180, easing: cubicIn }}
+									out:fly={{ y: -10, duration: 180, easing: cubicOut }}
+									class="flex items-center gap-1 {form.success ? 'text-green-600' : 'text-red-500'}"
+								>
+									{#if form.success}
+										<CircleCheck size="16" strokeWidth="2" class="shrink-0" />
+									{:else}
+										<CircleAlert size="16" strokeWidth="2" class="shrink-0" />
+									{/if}
+									<span>{alert.message}</span>
+								</span>
+							{:else if !!usernameError}
+								<span
+									in:fly={{ y: -10, duration: 180, easing: cubicIn }}
+									out:fly={{ y: -10, duration: 180, easing: cubicOut }}
+									class="text-red-500"
+								>
+									* {usernameError}
+								</span>
+							{/if}
+						</div>
 					</div>
 				</div>
 				<div class="flex w-full justify-end">

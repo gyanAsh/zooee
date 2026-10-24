@@ -1,12 +1,35 @@
 <script lang="ts">
-	import { CropIcon, ImagePlus, Trash, Upload, X, ZoomInIcon, ZoomOutIcon } from '@lucide/svelte';
+	import {
+		CircleAlert,
+		CircleCheck,
+		CropIcon,
+		ImagePlus,
+		Trash,
+		Upload,
+		X,
+		ZoomInIcon,
+		ZoomOutIcon
+	} from '@lucide/svelte';
 	import { AlertDialog, Slider } from 'bits-ui';
-	const { children, form } = $props();
-
 	import Cropper from '$lib/client/components/Cropper/Cropper.svelte';
 	import { enhance } from '$app/forms';
 	import Button from '$lib/client/components/ui/button.svelte';
+	import type { ActionData } from './$types.js';
+	import type { Snippet } from 'svelte';
+	import { fly } from 'svelte/transition';
+	import { cubicIn, cubicOut } from 'svelte/easing';
 
+	const {
+		children,
+		form,
+		alert
+	}: {
+		children: Snippet;
+		form: ActionData;
+		alert: {
+			message: string;
+		} | null;
+	} = $props();
 	// --- State ---
 	let imageSrc = $state<string | null>(null);
 	let isModalOpen = $state(false);
@@ -119,10 +142,10 @@
 			>
 				Profile Banner
 			</AlertDialog.Title>
-			<AlertDialog.Description class="text-sm text-foreground-alt">
+			<AlertDialog.Description class="relative mb-3 text-sm text-foreground-alt">
 				Add a cover image to personalize your booking page and represent your brand.
 			</AlertDialog.Description>
-			<div class="flex flex-col items-start py-5">
+			<div class="relative flex flex-col items-start py-5">
 				{#if isModalOpen && imageSrc}
 					<div class="flex h-[min(50vh,600px)] w-full flex-col overflow-hidden">
 						<!-- Header -->
@@ -239,10 +262,30 @@
 					onchange={handleFileSelect}
 					class="hidden"
 				/>
-
-				{#if form?.message}
-					<p class={form.success ? 'text-green-500' : 'text-red-500'}>{form.message}</p>
-				{/if}
+				<div class="absolute -bottom-2.5 left-0 translate-y-full text-xs font-medium">
+					{#if form && alert && form.type === 'name'}
+						<span
+							in:fly={{ y: -10, duration: 180, easing: cubicIn }}
+							out:fly={{ y: -10, duration: 180, easing: cubicOut }}
+							class="flex items-center gap-1 {form.success ? 'text-green-600' : 'text-red-500'}"
+						>
+							{#if form.success}
+								<CircleCheck size="16" strokeWidth="2" class="shrink-0" />
+							{:else}
+								<CircleAlert size="16" strokeWidth="2" class="shrink-0" />
+							{/if}
+							<span>{alert.message}</span>
+						</span>
+						<!-- {:else if !!nameError}
+						<span
+							in:fly={{ y: -10, duration: 180, easing: cubicIn }}
+							out:fly={{ y: -10, duration: 180, easing: cubicOut }}
+							class="text-red-500"
+						>
+							* {nameError}
+						</span> -->
+					{/if}
+				</div>
 			</div>
 			<form method="POST" enctype="multipart/form-data" use:enhance class="flex w-full justify-end">
 				<input bind:this={fileInput} type="file" name="croppedImage" class="hidden" />

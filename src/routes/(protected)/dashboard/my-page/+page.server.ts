@@ -1,6 +1,5 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types.js';
-import { getUserById } from '$lib/server/db/queries/user.js';
 import {
 	getBookingPageByUserId,
 	createBookingPage,
@@ -20,6 +19,24 @@ import {
 
 const field = (form: FormData, key: string) => String(form.get(key) ?? '');
 
+type FieldType = 'name' | 'username' | 'bio' | 'user_image' | 'banner_image' | 'booking_page';
+
+/** Success response — T keeps the exact literal type. */
+function ok<T extends FieldType>(type: T, message: string) {
+	return { success: true as const, type, message };
+}
+
+/** Failure response — T keeps the exact literal type. */
+function failWith<T extends FieldType>(status: number, type: T, message: string) {
+	return fail(status, { success: false as const, type, message });
+}
+
+/** Single auth guard instead of repeating it in every action. */
+function requireUser(locals: App.Locals) {
+	if (!locals.user) throw redirect(303, '/sign-in');
+	return locals.user;
+}
+
 function isUniqueViolation(err: unknown): boolean {
 	return (
 		typeof err === 'object' &&
@@ -30,178 +47,158 @@ function isUniqueViolation(err: unknown): boolean {
 }
 
 export const load: PageServerLoad = async ({ locals }) => {
-	if (!locals.user) throw redirect(303, '/sign-in');
+	const user = requireUser(locals);
 
-	const bookingPage = await getBookingPageByUserId({ user_id: locals.user.id });
+	const bookingPage = await getBookingPageByUserId({ user_id: user.id });
 
 	return { bookingPage };
 };
 
 export const actions: Actions = {
 	update_display_name: async ({ request, locals }) => {
-		if (!locals.user) throw redirect(303, '/sign-in');
+		const user = requireUser(locals);
 
 		const form = await request.formData();
 		const parsed = displayNameSchema.safeParse(field(form, 'name'));
 		if (!parsed.success) {
-			return fail(400, {
-				success: false,
-				message: parsed.error.issues[0]?.message ?? 'Invalid display name.'
-			});
+			return failWith(400, 'name', parsed.error.issues[0]?.message ?? 'Invalid display name.');
 		}
-		const user = locals.user;
-
+		console.log({ user });
 		const page = await updateBookingPageDisplayName({
 			user_id: user.id,
 			display_name: parsed.data
 		});
-		if (!page) return fail(404, { success: false, message: 'Booking page not found.' });
+		if (!page) return failWith(404, 'name', 'Booking page not found.');
 
-		return { success: true, message: 'Display name updated.' };
+		return ok('name', 'Display name updated.');
 	},
 
 	update_username: async ({ request, locals }) => {
-		if (!locals.user) throw redirect(303, '/sign-in');
+		const user = requireUser(locals);
 
 		const form = await request.formData();
 		const parsed = usernameSchema.safeParse(field(form, 'username'));
 		if (!parsed.success) {
-			return fail(400, {
-				success: false,
-				message: parsed.error.issues[0]?.message ?? 'Invalid username.'
-			});
+			return failWith(400, 'username', parsed.error.issues[0]?.message ?? 'Invalid username.');
 		}
-
-		const user = locals.user;
 
 		try {
 			const page = await updateBookingPageUsername({
 				user_id: user.id,
 				username: parsed.data
 			});
-			if (!page) return fail(404, { success: false, message: 'Booking page not found.' });
+			if (!page) return failWith(404, 'username', 'Booking page not found.');
 		} catch (err) {
 			if (isUniqueViolation(err)) {
-				return fail(409, { success: false, message: 'That username is already taken.' });
+				return failWith(409, 'username', 'That username is already taken.');
 			}
 			throw err;
 		}
 
-		return { success: true, message: 'Username updated.' };
+		return ok('username', 'Username updated.');
 	},
 
 	update_bio: async ({ request, locals }) => {
-		if (!locals.user) throw redirect(303, '/sign-in');
+		const user = requireUser(locals);
 
 		const form = await request.formData();
 		const parsed = bioSchema.safeParse(field(form, 'bio'));
 		if (!parsed.success) {
-			return fail(400, {
-				success: false,
-				message: parsed.error.issues[0]?.message ?? 'Invalid bio.'
-			});
+			return failWith(400, 'bio', parsed.error.issues[0]?.message ?? 'Invalid bio.');
 		}
-		const user = locals.user;
 
 		const page = await updateBookingPageBio({ user_id: user.id, bio: parsed.data });
-		if (!page) return fail(404, { success: false, message: 'Booking page not found.' });
+		if (!page) return failWith(404, 'bio', 'Booking page not found.');
 
-		return { success: true, message: 'Bio updated.' };
+		return ok('bio', 'Bio updated.');
 	},
 
 	update_user_image: async ({ request, locals }) => {
-		if (!locals.user) throw redirect(303, '/sign-in');
-		const user = await getUserById({ id: locals.user.id });
-		if (!user) return fail(404, { success: false, message: 'User not found.' });
+		const user = requireUser(locals);
 
 		const form = await request.formData();
 		const parsed = imageUrlSchema.safeParse(field(form, 'user_image_url'));
 		if (!parsed.success) {
-			return fail(400, {
-				success: false,
-				message: parsed.error.issues[0]?.message ?? 'Invalid image URL.'
-			});
+			return failWith(400, 'user_image', parsed.error.issues[0]?.message ?? 'Invalid image URL.');
 		}
 
 		const page = await updateBookingPageImageUrl({
 			user_id: user.id,
 			user_image_url: parsed.data
 		});
-		if (!page) return fail(404, { success: false, message: 'Booking page not found.' });
+		if (!page) return failWith(404, 'user_image', 'Booking page not found.');
 
-		return { success: true, message: 'Profile image updated.' };
+		return ok('user_image', 'Profile image updated.');
 	},
 
 	update_banner: async ({ request, locals }) => {
-		if (!locals.user) throw redirect(303, '/sign-in');
-		const user = await getUserById({ id: locals.user.id });
-		if (!user) return fail(404, { success: false, message: 'User not found.' });
+		const user = requireUser(locals);
 
 		const form = await request.formData();
 		const parsed = imageUrlSchema.safeParse(field(form, 'banner_url'));
 		if (!parsed.success) {
-			return fail(400, {
-				success: false,
-				message: parsed.error.issues[0]?.message ?? 'Invalid banner URL.'
-			});
+			return failWith(
+				400,
+				'banner_image',
+				parsed.error.issues[0]?.message ?? 'Invalid banner URL.'
+			);
 		}
 
 		const page = await updateBookingPageBannerUrl({
 			user_id: user.id,
 			banner_url: parsed.data
 		});
-		if (!page) return fail(404, { success: false, message: 'Booking page not found.' });
+		if (!page) return failWith(404, 'banner_image', 'Booking page not found.');
 
-		return { success: true, message: 'Banner updated.' };
+		return ok('banner_image', 'Banner updated.');
 	},
 
 	create_booking_page: async ({ request, locals }) => {
-		if (!locals.user) throw redirect(303, '/sign-in');
+		const user = requireUser(locals);
 
 		const form = await request.formData();
 
 		const parsedDisplayName = displayNameSchema.safeParse(field(form, 'display_name'));
 		if (!parsedDisplayName.success) {
-			return fail(400, {
-				success: false,
-				message: parsedDisplayName.error.issues[0]?.message ?? 'Invalid display name.'
-			});
+			return failWith(
+				400,
+				'booking_page',
+				parsedDisplayName.error.issues[0]?.message ?? 'Invalid display name.'
+			);
 		}
 
 		const parsedUsername = usernameSchema.safeParse(field(form, 'username'));
 		if (!parsedUsername.success) {
-			return fail(400, {
-				success: false,
-				message: parsedUsername.error.issues[0]?.message ?? 'Invalid username.'
-			});
+			return failWith(
+				400,
+				'booking_page',
+				parsedUsername.error.issues[0]?.message ?? 'Invalid username.'
+			);
 		}
 
 		// Optional fields: an empty string is normalized to null by the schemas.
 		const parsedBio = bioSchema.safeParse(field(form, 'bio'));
 		if (!parsedBio.success) {
-			return fail(400, {
-				success: false,
-				message: parsedBio.error.issues[0]?.message ?? 'Invalid bio.'
-			});
+			return failWith(400, 'booking_page', parsedBio.error.issues[0]?.message ?? 'Invalid bio.');
 		}
 
 		try {
 			const takeUserName = await getBookingPageByUsername({ username: parsedUsername.data });
 			if (takeUserName) {
-				return fail(409, { success: false, message: 'Username already taken' });
+				return failWith(409, 'booking_page', 'Username already taken');
 			}
 
 			const page = await createBookingPage({
-				user_id: locals.user.id,
+				user_id: user.id,
 				display_name: parsedDisplayName.data,
 				username: parsedUsername.data,
 				bio: parsedBio.data
 			});
 
-			return { success: true, message: 'Booking page created.', page };
+			return { ...ok('booking_page', 'Booking page created.'), page };
 		} catch (err) {
 			if (isUniqueViolation(err)) {
-				return fail(409, { success: false, message: 'That username is already taken.' });
+				return failWith(409, 'booking_page', 'That username is already taken.');
 			}
 			throw err;
 		}

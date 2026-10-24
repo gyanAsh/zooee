@@ -2,11 +2,26 @@
 	import { enhance } from '$app/forms';
 	import Button from '$lib/client/components/ui/button.svelte';
 	import { displayNameSchema } from '$lib/validation-schemas/booking-page.js';
-	import { X } from '@lucide/svelte';
+	import { CircleAlert, CircleCheck, X } from '@lucide/svelte';
 	import { Dialog } from 'bits-ui';
 	import type { Snippet } from 'svelte';
+	import type { ActionData } from './$types.js';
+	import { fly } from 'svelte/transition';
+	import { cubicIn, cubicOut } from 'svelte/easing';
 
-	const { children, defaultValue = '' }: { defaultValue?: string; children: Snippet } = $props();
+	const {
+		children,
+		defaultValue = '',
+		form,
+		alert
+	}: {
+		defaultValue?: string;
+		children: Snippet;
+		form: ActionData;
+		alert: {
+			message: string;
+		} | null;
+	} = $props();
 	let submitting = $state(false);
 	let name_value = $derived(defaultValue);
 
@@ -62,19 +77,37 @@
 							required
 							name="name"
 						/>
-						{#if !!nameError}
-							<p
-								class="absolute -bottom-2.5 left-0 translate-y-full text-xs font-medium text-red-500"
-							>
-								* {nameError}
-							</p>
-						{/if}
+						<div class="absolute -bottom-2.5 left-0 translate-y-full text-xs font-medium">
+							{#if form && alert && form.type === 'name'}
+								<span
+									in:fly={{ y: -10, duration: 180, easing: cubicIn }}
+									out:fly={{ y: -10, duration: 180, easing: cubicOut }}
+									class="flex items-center gap-1 {form.success ? 'text-green-600' : 'text-red-500'}"
+								>
+									{#if form.success}
+										<CircleCheck size="16" strokeWidth="2" class="shrink-0" />
+									{:else}
+										<CircleAlert size="16" strokeWidth="2" class="shrink-0" />
+									{/if}
+									<span>{alert.message}</span>
+								</span>
+							{:else if !!nameError}
+								<span
+									in:fly={{ y: -10, duration: 180, easing: cubicIn }}
+									out:fly={{ y: -10, duration: 180, easing: cubicOut }}
+									class="text-red-500"
+								>
+									* {nameError}
+								</span>
+							{/if}
+						</div>
 					</div>
 				</div>
+
 				<div class="flex w-full justify-end">
 					{#if !!nameError || isSame}
-						<Dialog.Close>
-							<Button variant="ghost">Close</Button>
+						<Dialog.Close type="button">
+							<Button type="button" variant="ghost">Close</Button>
 						</Dialog.Close>
 					{:else}
 						<Button type="submit" variant="primary">Update</Button>

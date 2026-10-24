@@ -15,6 +15,31 @@
 
 	const links = [15, 20, 30];
 	let { data, form } = $props();
+
+	let alert = $state<{
+		message: string;
+	} | null>(null);
+
+	$effect(() => {
+		// Read `form` itself (not just form.message) so a new actionData
+		// result always re-triggers this effect, even for identical text.
+		const f = form;
+
+		if (!f?.message) {
+			alert = null;
+			return;
+		}
+
+		alert = { message: f.message };
+
+		const id = setTimeout(() => {
+			alert = null;
+		}, 3000);
+
+		// Runs before the next effect run AND on unmount.
+		return () => clearTimeout(id);
+	});
+
 	let allowEdit = $state(true);
 </script>
 
@@ -45,7 +70,7 @@
 			class="mt-10 grid h-fit w-full max-w-3xl gap-2.5 rounded-4xl border bg-[#FCFBF7] p-4 text-sm"
 		>
 			{#if true}
-				<AddHeroImage {form}>
+				<AddHeroImage {form} {alert}>
 					<section
 						class="group relative grid aspect-10/4 w-full cursor-pointer
 				 place-items-center gap-1 rounded-2xl border-2 border-dashed border-gray-400 bg-zinc-100
@@ -75,7 +100,7 @@
 
 			<div class="relative">
 				{#if true}
-					<AddProfileImage {form}>
+					<AddProfileImage {form} {alert}>
 						<section
 							class="group absolute right-0 flex aspect-square size-20 -translate-x-1/2 translate-y-[-80%] cursor-pointer flex-col items-center justify-center
 					    gap-1 rounded-2xl border-2 border-dashed border-gray-400 bg-gray-100 object-cover text-sm font-medium text-gray-400 hover:border-gray-500 hover:text-gray-500 active:border-gray-800 active:text-gray-800 md:size-25"
@@ -101,12 +126,12 @@
 			<section class="grid gap-5">
 				<div>
 					<div class="flex items-center gap-2.5">
-						<EditNameDialog defaultValue={data.bookingPage.display_name}>
+						<EditNameDialog {form} {alert} defaultValue={data.bookingPage.display_name}>
 							<EditBox top="-top-[calc(100%+4px)]" text="Update Display Name">
 								<h1 class="text-lg font-bold">{data.bookingPage.display_name}</h1>
 							</EditBox>
 						</EditNameDialog>
-						<EditUsernameDialog defaultValue={data.bookingPage.username}>
+						<EditUsernameDialog {form} {alert} defaultValue={data.bookingPage.username}>
 							<EditBox top="-top-[calc(100%+12px)]" text="Update Username">
 								<h2 class="  gap-.5 flex items-center text-gray-500">
 									<AtSign size="14" strokeWidth="2" />
@@ -115,7 +140,7 @@
 							</EditBox>
 						</EditUsernameDialog>
 					</div>
-					<EditBioDialog defaultValue={data.bookingPage.bio || ''}>
+					<EditBioDialog {form} {alert} defaultValue={data.bookingPage.bio || ''}>
 						<EditBox top="-top-[calc(100%+12px)]" text="Update Bio">
 							<p class="text-start">
 								{data.bookingPage.bio}

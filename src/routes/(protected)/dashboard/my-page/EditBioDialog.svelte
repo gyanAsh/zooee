@@ -2,10 +2,27 @@
 	import { enhance } from '$app/forms';
 	import Button from '$lib/client/components/ui/button.svelte';
 	import { bioSchema } from '$lib/validation-schemas/booking-page.js';
-	import { X } from '@lucide/svelte';
+	import { CircleAlert, CircleCheck, X } from '@lucide/svelte';
 	import { Dialog } from 'bits-ui';
 	import type { Snippet } from 'svelte';
-	const { children, defaultValue = '' }: { defaultValue?: string; children: Snippet } = $props();
+	import { cubicIn, cubicOut } from 'svelte/easing';
+	import { fly } from 'svelte/transition';
+	import type { ActionData } from './$types.js';
+
+	const {
+		children,
+		defaultValue = '',
+		form,
+		alert
+	}: {
+		defaultValue?: string;
+		children: Snippet;
+		form: ActionData;
+		alert: {
+			message: string;
+		} | null;
+	} = $props();
+
 	let submitting = $state(false);
 	let bio_value = $derived(defaultValue);
 
@@ -40,7 +57,7 @@
 			>
 				Edit Bio
 			</Dialog.Title>
-			<Dialog.Description class="text-sm text-foreground-alt">
+			<Dialog.Description class="relative mb-3 text-sm text-foreground-alt">
 				Add a brief description about yourself to help people know who they are booking with.
 			</Dialog.Description>
 			<form method="POST" action="?/update_bio" use:enhance>
@@ -57,13 +74,30 @@
 							oninput={validateBio}
 							disabled={submitting}
 							name="bio"></textarea>
-						{#if !!bioError}
-							<p
-								class="absolute -bottom-2.5 left-0 translate-y-full text-xs font-medium text-red-500"
-							>
-								* {bioError}
-							</p>
-						{/if}
+						<div class="absolute -bottom-2.5 left-0 translate-y-full text-xs font-medium">
+							{#if form && alert && form.type === 'bio'}
+								<span
+									in:fly={{ y: -10, duration: 180, easing: cubicIn }}
+									out:fly={{ y: -10, duration: 180, easing: cubicOut }}
+									class="flex items-center gap-1 {form.success ? 'text-green-600' : 'text-red-500'}"
+								>
+									{#if form.success}
+										<CircleCheck size="16" strokeWidth="2" class="shrink-0" />
+									{:else}
+										<CircleAlert size="16" strokeWidth="2" class="shrink-0" />
+									{/if}
+									<span>{alert.message}</span>
+								</span>
+							{:else if !!bioError}
+								<span
+									in:fly={{ y: -10, duration: 180, easing: cubicIn }}
+									out:fly={{ y: -10, duration: 180, easing: cubicOut }}
+									class="text-red-500"
+								>
+									* {bioError}
+								</span>
+							{/if}
+						</div>
 					</div>
 				</div>
 				<div class="flex w-full justify-end">

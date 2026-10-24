@@ -10,8 +10,8 @@
 	import EditUsernameDialog from './EditUsernameDialog.svelte';
 	import EditBioDialog from './EditBioDialog.svelte';
 	import AddProfileImage from './AddProfileImage.svelte';
-	import AddHeroImage from './AddHeroImage.svelte';
 	import NoBookingIDFound from './NoBookingIDFound.svelte';
+	import AddBannerImage from './AddBannerImage.svelte';
 
 	const links = [15, 20, 30];
 	let { data, form } = $props();
@@ -51,7 +51,7 @@
 		<section
 			class=" absolute top-0 flex h-fit w-fit items-center justify-center gap-2.5 rounded-b-2xl border-x border-b bg-gray-50 p-2"
 		>
-			<Button variant="secondary" onClick={() => (allowEdit = !allowEdit)}>
+			<Button variant="secondary" onclick={() => (allowEdit = !allowEdit)}>
 				<div class="inline-flex items-center justify-center gap-1 text-sm font-medium">
 					<PencilSparkles size="14" strokeWidth="2" />
 					<span>Edit Profile</span>
@@ -70,7 +70,7 @@
 			class="mt-10 grid h-fit w-full max-w-3xl gap-2.5 rounded-4xl border bg-[#FCFBF7] p-4 text-sm"
 		>
 			{#if true}
-				<AddHeroImage {form} {alert}>
+				<AddBannerImage {form} {alert}>
 					<section
 						class="group relative grid aspect-10/4 w-full cursor-pointer
 				 place-items-center gap-1 rounded-2xl border-2 border-dashed border-gray-400 bg-zinc-100
@@ -89,7 +89,7 @@
 							Add Banner
 						</div>
 					</section>
-				</AddHeroImage>
+				</AddBannerImage>
 			{:else}
 				<img
 					src="https://d3p3fw3rutb1if.cloudfront.net/photos/c010380a-8595-45ad-8e1f-b17af6d93df2"

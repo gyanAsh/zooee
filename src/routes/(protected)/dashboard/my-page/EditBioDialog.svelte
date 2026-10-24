@@ -102,8 +102,8 @@
 				</div>
 				<div class="flex w-full justify-end">
 					{#if !!bioError || isSame}
-						<Dialog.Close>
-							<Button variant="ghost">Close</Button>
+						<Dialog.Close type="button">
+							<Button variant="ghost" type="button">Close</Button>
 						</Dialog.Close>
 					{:else}
 						<Button type="submit" variant="primary">Update</Button>

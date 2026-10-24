@@ -1,27 +1,33 @@
 <script lang="ts">
 	import { Button } from 'bits-ui';
 	import type { Snippet } from 'svelte';
-	interface Props {
-		class?: string;
+	import type { HTMLButtonAttributes } from 'svelte/elements';
+
+	type Variant = 'primary' | 'secondary' | 'black' | 'ghost';
+
+	// Extend native button attributes, narrowing `type` to the 3 valid values.
+	// Everything else (onclick, disabled, aria-*, form, name, …) comes from
+	// HTMLButtonAttributes — no need to re-declare them.
+	type Props = Omit<HTMLButtonAttributes, 'type'> & {
 		type?: 'button' | 'submit' | 'reset';
-		children: Snippet; // or Snippet
+		variant?: Variant;
 		isActive?: boolean;
-		variant?: 'primary' | 'secondary' | 'black' | 'ghost';
-		onClick?: (e: MouseEvent) => void;
-	}
-	const {
-		class: className = '',
-		type = 'button',
-		children,
-		isActive = false,
+		class?: string;
+		children: Snippet;
+	};
+
+	let {
+		type = 'button', // safe default: never submits by accident
 		variant = 'primary',
-		onClick = () => {}
+		isActive = false,
+		class: className = '',
+		children,
+		...rest // forwards onclick, disabled, aria-*, ref, …
 	}: Props = $props();
 </script>
 
 <Button.Root
 	{type}
-	onclick={onClick}
 	class="cursor-pointer {className} rounded-lg px-2 py-1.5 text-sm transition-colors
 		{variant === 'primary'
 		? 'primary_btn'
@@ -34,7 +40,9 @@
 						? 'primary_btn'
 						: 'ghost_btn'
 					: ''}"
-	aria-current={isActive ? 'page' : undefined}
+	data-variant={variant}
+	data-active={isActive || undefined}
+	{...rest}
 >
 	{@render children()}
 </Button.Root>

@@ -197,7 +197,7 @@
 		<div class="flex items-center justify-end gap-2 pt-1">
 			<Button
 				variant="ghost"
-				onClick={() => {
+				onclick={() => {
 					displayName = '';
 					username = '';
 					bio = '';

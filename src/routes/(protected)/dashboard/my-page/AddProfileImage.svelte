@@ -4,6 +4,7 @@
 		CircleCheck,
 		CropIcon,
 		ImagePlus,
+		Loader,
 		Trash,
 		Upload,
 		X,
@@ -41,6 +42,7 @@
 	let previewUrl = $state<string | null>(null);
 	let fileInput = $state<HTMLInputElement | null>(null);
 	let hasCroppedFile = $state(false);
+	let submitting = $state(false);
 
 	// --- File Selection ---
 	function handleFileSelect(event: Event) {
@@ -65,8 +67,8 @@
 
 	// --- Generate Preview + Attach File to Hidden Input ---
 	async function applyCrop() {
-		if (!imageSrc) return;
-
+		if (!imageSrc || submitting) return;
+		submitting = true;
 		const canvas = document.createElement('canvas');
 		const ctx = canvas.getContext('2d');
 		if (!ctx) return;
@@ -101,7 +103,7 @@
 					dt.items.add(file);
 					fileInput.files = dt.files;
 					hasCroppedFile = true;
-
+					submitting = false;
 					isModalOpen = false;
 				},
 				'image/jpeg',
@@ -113,6 +115,8 @@
 	// --- Cancel ---
 	function cancelCrop() {
 		isModalOpen = false;
+		submitting = false;
+
 		if (imageSrc) URL.revokeObjectURL(imageSrc);
 		imageSrc = null;
 		previewUrl = null;
@@ -155,7 +159,11 @@
 						</header>
 
 						<!-- Cropper area -->
-						<div class="relative aspect-square w-75 flex-1 bg-black">
+						<div
+							inert={submitting}
+							class="relative aspect-square w-75 flex-1 bg-black
+							{submitting ? 'animate-pulse' : ''}"
+						>
 							<Cropper
 								image={imageSrc}
 								bind:crop
@@ -168,10 +176,12 @@
 
 						<!-- Footer -->
 						<footer
+							inert={submitting}
 							class="relative z-10 flex w-full shrink-0 flex-col items-center justify-center gap-4 p-4 md:flex-row"
 						>
 							<ZoomOutIcon size="20" class="text-gray-500" strokeWidth="2" />
 							<Slider.Root
+								disabled={submitting}
 								type="single"
 								min={1}
 								max={3}
@@ -194,11 +204,16 @@
 							<ZoomInIcon size="20" class="text-gray-500" strokeWidth="2" />
 						</footer>
 						<div class="grid w-70 grid-cols-2 gap-1">
-							<Button variant="secondary" onClick={cancelCrop}>Cancel</Button>
-							<Button onClick={applyCrop}>
+							<Button variant="secondary" onclick={cancelCrop}>Cancel</Button>
+							<Button disabled={submitting} onclick={applyCrop}>
 								<div class="flex items-center justify-center gap-1">
-									<CropIcon size="16" strokeWidth="2" />
-									<h2>Crop</h2>
+									{#if submitting}
+										<h1>Cropping</h1>
+										<Loader size="12" strokeWidth="3" class="animate-spin" />
+									{:else}
+										<CropIcon size="16" strokeWidth="2" />
+										<h2>Crop</h2>
+									{/if}
 								</div>
 							</Button>
 						</div>

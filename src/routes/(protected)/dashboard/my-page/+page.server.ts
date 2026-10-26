@@ -11,15 +11,36 @@ import {
 	getBookingPageByUsername
 } from '$lib/server/db/queries/booking_page.js';
 import {
+	createBookingLink,
+	getBookingLinkById,
+	getBookingLinksByPageId,
+	updateBookingLink
+} from '$lib/server/db/queries/booking_links.js';
+import {
 	displayNameSchema,
 	usernameSchema,
 	bioSchema,
 	imageUrlSchema
 } from '$lib/validation-schemas/booking-page.js';
+import {
+	bookingLinkDescriptionSchema,
+	bookingLinkDurationSchema,
+	bookingLinkNameSchema
+} from '$lib/validation-schemas/booking-links.js';
 
 const field = (form: FormData, key: string) => String(form.get(key) ?? '');
 
-type FieldType = 'name' | 'username' | 'bio' | 'user_image' | 'banner_image' | 'booking_page';
+type FieldType =
+	| 'name'
+	| 'username'
+	| 'bio'
+	| 'user_image'
+	| 'banner_image'
+	| 'booking_page'
+	| 'booking_link'
+	| 'booking_link_name'
+	| 'booking_link_description'
+	| 'booking_link_duration';
 
 /** Success response — T keeps the exact literal type. */
 function ok<T extends FieldType>(type: T, message: string) {
@@ -50,8 +71,11 @@ export const load: PageServerLoad = async ({ locals }) => {
 	const user = requireUser(locals);
 
 	const bookingPage = await getBookingPageByUserId({ user_id: user.id });
+	const bookingLinks = bookingPage
+		? await getBookingLinksByPageId({ booking_page_id: bookingPage.id })
+		: [];
 
-	return { bookingPage };
+	return { bookingPage, bookingLinks };
 };
 
 export const actions: Actions = {
@@ -202,5 +226,104 @@ export const actions: Actions = {
 			}
 			throw err;
 		}
+	},
+
+	create_booking_link: async ({ request, locals }) => {
+		const user = requireUser(locals);
+
+		const page = await getBookingPageByUserId({ user_id: user.id });
+		if (!page) return failWith(404, 'booking_link', 'Booking page not found.');
+
+		const form = await request.formData();
+
+		const parsedName = bookingLinkNameSchema.safeParse(field(form, 'name'));
+		if (!parsedName.success) {
+			return failWith(
+				400,
+				'booking_link_name',
+				parsedName.error.issues[0]?.message ?? 'Invalid name.'
+			);
+		}
+
+		const parsedDescription = bookingLinkDescriptionSchema.safeParse(field(form, 'description'));
+		if (!parsedDescription.success) {
+			return failWith(
+				400,
+				'booking_link_description',
+				parsedDescription.error.issues[0]?.message ?? 'Invalid description.'
+			);
+		}
+
+		const parsedDuration = bookingLinkDurationSchema.safeParse(field(form, 'duration_minutes'));
+		if (!parsedDuration.success) {
+			return failWith(
+				400,
+				'booking_link_duration',
+				parsedDuration.error.issues[0]?.message ?? 'Invalid duration.'
+			);
+		}
+
+		const link = await createBookingLink({
+			booking_page_id: page.id,
+			name: parsedName.data,
+			description: parsedDescription.data,
+			duration_minutes: parsedDuration.data
+		});
+
+		return { ...ok('booking_link', 'Booking link created.'), link };
+	},
+
+	update_booking_link: async ({ request, locals }) => {
+		const user = requireUser(locals);
+
+		const page = await getBookingPageByUserId({ user_id: user.id });
+		if (!page) return failWith(404, 'booking_link', 'Booking page not found.');
+
+		const form = await request.formData();
+		const id = field(form, 'id');
+		if (!id) return failWith(400, 'booking_link', 'Booking link id is required.');
+
+		// Ownership check: never update a link that belongs to another page.
+		const existing = await getBookingLinkById({ id });
+		if (!existing || existing.booking_page_id !== page.id) {
+			return failWith(404, 'booking_link', 'Booking link not found.');
+		}
+
+		const parsedName = bookingLinkNameSchema.safeParse(field(form, 'name'));
+		if (!parsedName.success) {
+			return failWith(
+				400,
+				'booking_link_name',
+				parsedName.error.issues[0]?.message ?? 'Invalid name.'
+			);
+		}
+
+		const parsedDescription = bookingLinkDescriptionSchema.safeParse(field(form, 'description'));
+		if (!parsedDescription.success) {
+			return failWith(
+				400,
+				'booking_link_description',
+				parsedDescription.error.issues[0]?.message ?? 'Invalid description.'
+			);
+		}
+
+		const parsedDuration = bookingLinkDurationSchema.safeParse(field(form, 'duration_minutes'));
+		if (!parsedDuration.success) {
+			return failWith(
+				400,
+				'booking_link_duration',
+				parsedDuration.error.issues[0]?.message ?? 'Invalid duration.'
+			);
+		}
+
+		const link = await updateBookingLink({
+			id,
+			name: parsedName.data,
+			description: parsedDescription.data,
+			duration_minutes: parsedDuration.data
+		});
+		if (!link) return failWith(404, 'booking_link', 'Booking link not found.');
+
+		return { ...ok('booking_link', 'Booking link updated.'), link };
 	}
 };

@@ -12,6 +12,7 @@
 	import AddProfileImage from './AddProfileImage.svelte';
 	import NoBookingIDFound from './NoBookingIDFound.svelte';
 	import AddBannerImage from './AddBannerImage.svelte';
+	import AddBookingLinks from './AddBookingLinks.svelte';
 
 	const links = [15, 20, 30];
 	let { data, form } = $props();
@@ -41,6 +42,9 @@
 	});
 
 	let allowEdit = $state(true);
+	{
+		console.log({});
+	}
 </script>
 
 <section
@@ -59,12 +63,12 @@
 			</Button>
 
 			<div class="my-0.5 w-[1.5px] self-stretch rounded-full bg-gray-300"></div>
-			<Button>
+			<AddBookingLinks {form} {alert}>
 				<div class="inline-flex items-center justify-center gap-1 text-sm font-medium">
 					<Plus class="" size="14" strokeWidth="2" />
 					<span>Add Booking Link</span>
 				</div>
-			</Button>
+			</AddBookingLinks>
 		</section>
 		<section
 			class="mt-10 grid h-fit w-full max-w-3xl gap-2.5 rounded-4xl border bg-[#FCFBF7] p-4 text-sm"
@@ -149,26 +153,26 @@
 					</EditBioDialog>
 				</div>
 
-				{#if links.length > 0}
+				{#if data.bookingLinks.length > 0}
 					<section class="grid w-full gap-2.5">
-						{#each links as link (link)}
+						{#each data.bookingLinks as link (link)}
 							<a
 								href={resolve(`/dashboard/my-page/${link}`)}
-								class="group flex w-full items-center justify-between rounded-2xl border
+								class="group flex h-17 w-full items-center justify-between rounded-2xl border
 								border-gray-300 bg-[#E0DED9]/30 px-4 py-3 transition-all duration-75 ease-in hover:border-gray-500
 								hover:bg-white active:-translate-y-1 active:scale-[0.99] active:border-gray-800"
 							>
 								<div class="grid">
-									<h1 class=" font-medium">{link} mins meeting</h1>
-									<p>Meeting description....</p>
+									<h1 class=" truncate font-medium">{link.name}</h1>
+									<p class="truncate">{link.description}</p>
 								</div>
-								<div class="grid h-full place-items-center">
+								<div class="grid h-full min-w-fit place-items-center">
 									<div
-										class="inline-flex w-fit items-center gap-0.5 font-medium
+										class="flex items-center gap-0.5 font-medium
 									  text-gray-800"
 									>
 										<Clock3 size="16" stroke-width="2.5" />
-										<span>{link} m</span>
+										<span>{link.duration_minutes} m</span>
 									</div>
 								</div>
 							</a>

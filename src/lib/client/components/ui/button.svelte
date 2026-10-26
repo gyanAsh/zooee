@@ -28,18 +28,16 @@
 
 <Button.Root
 	{type}
-	class="cursor-pointer {className} rounded-lg px-2 py-1.5 text-sm transition-colors
-		{variant === 'primary'
-		? 'primary_btn'
-		: variant === 'secondary'
-			? 'secondary_btn'
-			: variant === 'black'
-				? 'black_btn'
-				: variant === 'ghost'
-					? isActive
-						? 'primary_btn'
-						: 'ghost_btn'
-					: ''}"
+	class={[
+		'cursor-pointer rounded-lg px-2 py-1.5 text-sm transition-colors',
+		className,
+		variant === 'primary' && 'primary_btn',
+		variant === 'secondary' && 'secondary_btn',
+		variant === 'black' && 'black_btn',
+		variant === 'ghost' && (isActive ? 'primary_btn' : 'ghost_btn')
+	]
+		.filter(Boolean)
+		.join(' ')}
 	data-variant={variant}
 	data-active={isActive || undefined}
 	{...rest}

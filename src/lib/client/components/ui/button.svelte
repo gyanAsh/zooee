@@ -1,30 +1,46 @@
 <script lang="ts">
 	import { Button } from 'bits-ui';
+	import type { Snippet } from 'svelte';
+	import type { HTMLButtonAttributes } from 'svelte/elements';
 
-	const {
-		classtyle = '',
-		children,
-		isActive = false,
+	type Variant = 'primary' | 'secondary' | 'black' | 'ghost';
+
+	// Extend native button attributes, narrowing `type` to the 3 valid values.
+	// Everything else (onclick, disabled, aria-*, form, name, …) comes from
+	// HTMLButtonAttributes — no need to re-declare them.
+	type Props = Omit<HTMLButtonAttributes, 'type'> & {
+		type?: 'button' | 'submit' | 'reset';
+		variant?: Variant;
+		isActive?: boolean;
+		class?: string;
+		children: Snippet;
+	};
+
+	let {
+		type = 'button', // safe default: never submits by accident
 		variant = 'primary',
-		onClick = () => {}
-	} = $props();
+		isActive = false,
+		class: className = '',
+		children,
+		...rest // forwards onclick, disabled, aria-*, ref, …
+	}: Props = $props();
 </script>
 
 <Button.Root
-	onclick={() => onClick()}
-	class="cursor-pointer {classtyle} rounded-lg px-2 py-1.5 text-sm transition-colors
-		{variant === 'primary'
-		? 'primary_btn'
-		: variant === 'secondary'
-			? 'secondary_btn'
-			: variant === 'black'
-				? 'black_btn'
-				: variant === 'ghost'
-					? isActive
-						? 'primary_btn'
-						: 'ghost_btn'
-					: ''}"
-	aria-current={isActive ? 'page' : undefined}
+	{type}
+	class={[
+		'cursor-pointer rounded-lg px-2 py-1.5 text-sm transition-colors',
+		className,
+		variant === 'primary' && 'primary_btn',
+		variant === 'secondary' && 'secondary_btn',
+		variant === 'black' && 'black_btn',
+		variant === 'ghost' && (isActive ? 'primary_btn' : 'ghost_btn')
+	]
+		.filter(Boolean)
+		.join(' ')}
+	data-variant={variant}
+	data-active={isActive || undefined}
+	{...rest}
 >
 	{@render children()}
 </Button.Root>

@@ -1,11 +1,36 @@
 <script lang="ts">
-	import { CropIcon, ImagePlus, Trash, Upload, X, ZoomInIcon, ZoomOutIcon } from '@lucide/svelte';
+	import {
+		CircleAlert,
+		CircleCheck,
+		CropIcon,
+		ImagePlus,
+		Loader,
+		Trash,
+		Upload,
+		X,
+		ZoomInIcon,
+		ZoomOutIcon
+	} from '@lucide/svelte';
 	import { AlertDialog, Slider } from 'bits-ui';
-	const { children, form } = $props();
-
 	import { enhance } from '$app/forms';
 	import Cropper from '$lib/client/components/Cropper/Cropper.svelte';
 	import Button from '$lib/client/components/ui/button.svelte';
+	import type { Snippet } from 'svelte';
+	import type { ActionData } from './$types.js';
+	import { fly } from 'svelte/transition';
+	import { cubicIn, cubicOut } from 'svelte/easing';
+
+	const {
+		children,
+		form,
+		alert
+	}: {
+		children: Snippet;
+		form: ActionData;
+		alert: {
+			message: string;
+		} | null;
+	} = $props();
 
 	// --- State ---
 	let imageSrc = $state<string | null>(null);
@@ -17,6 +42,7 @@
 	let previewUrl = $state<string | null>(null);
 	let fileInput = $state<HTMLInputElement | null>(null);
 	let hasCroppedFile = $state(false);
+	let submitting = $state(false);
 
 	// --- File Selection ---
 	function handleFileSelect(event: Event) {
@@ -41,8 +67,8 @@
 
 	// --- Generate Preview + Attach File to Hidden Input ---
 	async function applyCrop() {
-		if (!imageSrc) return;
-
+		if (!imageSrc || submitting) return;
+		submitting = true;
 		const canvas = document.createElement('canvas');
 		const ctx = canvas.getContext('2d');
 		if (!ctx) return;
@@ -77,7 +103,7 @@
 					dt.items.add(file);
 					fileInput.files = dt.files;
 					hasCroppedFile = true;
-
+					submitting = false;
 					isModalOpen = false;
 				},
 				'image/jpeg',
@@ -89,6 +115,8 @@
 	// --- Cancel ---
 	function cancelCrop() {
 		isModalOpen = false;
+		submitting = false;
+
 		if (imageSrc) URL.revokeObjectURL(imageSrc);
 		imageSrc = null;
 		previewUrl = null;
@@ -119,20 +147,23 @@
 			>
 				Profile Picture
 			</AlertDialog.Title>
-			<AlertDialog.Description class="text-sm text-foreground-alt">
+			<AlertDialog.Description class="relative mb-3 text-sm text-foreground-alt">
 				Upload a photo to help clients and guests recognize you on your booking pages.
 			</AlertDialog.Description>
-			<div class="flex flex-col items-center py-5">
+			<div class="relative flex flex-col items-center py-5">
 				{#if isModalOpen && imageSrc}
 					<div class="flex h-[min(50vh,600px)] w-full flex-col items-center overflow-hidden">
 						<!-- Header -->
 						<header class="flex w-full shrink-0 items-center justify-between pb-4">
 							<h2 class="text-base font-semibold">Crop Image</h2>
-							<Button variant="secondary" onClick={cancelCrop}>Cancel</Button>
 						</header>
 
 						<!-- Cropper area -->
-						<div class="relative aspect-square w-75 flex-1 bg-black">
+						<div
+							inert={submitting}
+							class="relative aspect-square w-75 flex-1 bg-black
+							{submitting ? 'animate-pulse' : ''}"
+						>
 							<Cropper
 								image={imageSrc}
 								bind:crop
@@ -145,42 +176,47 @@
 
 						<!-- Footer -->
 						<footer
+							inert={submitting}
 							class="relative z-10 flex w-full shrink-0 flex-col items-center justify-center gap-4 p-4 md:flex-row"
 						>
-							<div class="flex items-center gap-4">
-								<ZoomOutIcon size="20" class="text-gray-500" strokeWidth="2" />
-								<Slider.Root
-									type="single"
-									min={1}
-									max={3}
-									step={0.01}
-									bind:value={zoom}
-									class="relative flex w-64 max-w-full touch-none items-center select-none"
+							<ZoomOutIcon size="20" class="text-gray-500" strokeWidth="2" />
+							<Slider.Root
+								disabled={submitting}
+								type="single"
+								min={1}
+								max={3}
+								step={0.01}
+								bind:value={zoom}
+								class="relative flex w-64 max-w-full touch-none items-center select-none"
+							>
+								<span
+									class="relative h-2 w-full grow cursor-pointer overflow-hidden rounded-full bg-dark-10"
 								>
-									<span
-										class="relative h-2 w-full grow cursor-pointer overflow-hidden rounded-full bg-dark-10"
-									>
-										<Slider.Range class="absolute h-full bg-blue-400" />
-									</span>
-									<Slider.Thumb
-										index={0}
-										class="block size-5 cursor-pointer rounded-full border border-gray-500 bg-white shadow-sm transition-colors hover:border-dark-40
+									<Slider.Range class="absolute h-full bg-blue-400" />
+								</span>
+								<Slider.Thumb
+									index={0}
+									class="block size-5 cursor-pointer rounded-full border border-gray-500 bg-white shadow-sm transition-colors hover:border-dark-40
 								    focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:outline-hidden disabled:pointer-events-none
 									disabled:opacity-50 data-active:scale-[0.98] data-active:border-dark-40 dark:bg-foreground dark:shadow-card"
-									/>
-								</Slider.Root>
-								<ZoomInIcon size="20" class="text-gray-500" strokeWidth="2" />
-							</div>
-
-							<div class="right-0 flex w-full justify-end md:absolute md:w-fit">
-								<Button onClick={applyCrop}>
-									<div class="flex items-center gap-1">
+								/>
+							</Slider.Root>
+							<ZoomInIcon size="20" class="text-gray-500" strokeWidth="2" />
+						</footer>
+						<div class="grid w-70 grid-cols-2 gap-1">
+							<Button variant="secondary" onclick={cancelCrop}>Cancel</Button>
+							<Button disabled={submitting} onclick={applyCrop}>
+								<div class="flex items-center justify-center gap-1">
+									{#if submitting}
+										<h1>Cropping</h1>
+										<Loader size="12" strokeWidth="3" class="animate-spin" />
+									{:else}
 										<CropIcon size="16" strokeWidth="2" />
 										<h2>Crop</h2>
-									</div>
-								</Button>
-							</div>
-						</footer>
+									{/if}
+								</div>
+							</Button>
+						</div>
 					</div>
 				{:else if previewUrl}
 					<div
@@ -242,18 +278,38 @@
 					onchange={handleFileSelect}
 					class="hidden"
 				/>
-
-				{#if form?.message}
-					<p class={form.success ? 'text-green-500' : 'text-red-500'}>{form.message}</p>
-				{/if}
+				<div class="absolute -bottom-2.5 left-0 translate-y-full text-xs font-medium">
+					{#if form && alert && form.type === 'user_image'}
+						<span
+							in:fly={{ y: -10, duration: 180, easing: cubicIn }}
+							out:fly={{ y: -10, duration: 180, easing: cubicOut }}
+							class="flex items-center gap-1 {form.success ? 'text-green-600' : 'text-red-500'}"
+						>
+							{#if form.success}
+								<CircleCheck size="16" strokeWidth="2" class="shrink-0" />
+							{:else}
+								<CircleAlert size="16" strokeWidth="2" class="shrink-0" />
+							{/if}
+							<span>{alert.message}</span>
+						</span>
+						<!-- {:else if !!nameError}
+						<span
+							in:fly={{ y: -10, duration: 180, easing: cubicIn }}
+							out:fly={{ y: -10, duration: 180, easing: cubicOut }}
+							class="text-red-500"
+						>
+							* {nameError}
+						</span> -->
+					{/if}
+				</div>
 			</div>
 			<form method="POST" enctype="multipart/form-data" use:enhance class="flex w-full justify-end">
 				<input bind:this={fileInput} type="file" name="croppedImage" class="hidden" />
 				<AlertDialog.Cancel>
 					<button
-						class="black_btn cursor-pointer rounded-lg px-2 py-1.5 text-sm transition-colors"
-						type="submit"
-						disabled={!hasCroppedFile}>Save</button
+						class="black_btn cursor-pointer rounded-lg px-2 py-1.5 text-sm transition-colors
+						{!isModalOpen && imageSrc && previewUrl && hasCroppedFile ? 'block' : 'hidden'}"
+						type="submit">Save</button
 					>
 				</AlertDialog.Cancel>
 			</form>

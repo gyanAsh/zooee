@@ -38,7 +38,7 @@
 					if (e === '[slug]') return page.url.pathname.startsWith(path);
 					else return page.url.pathname === path + `/${e}`;
 				})}
-			<Button {isActive} variant="ghost" onClick={() => goto(resolve(path as Pathname))}>
+			<Button {isActive} variant="ghost" onclick={() => goto(resolve(path as Pathname))}>
 				<div class="flex items-center gap-2">
 					<Icon size={18} strokeWidth={2} />
 					<span>{title}</span>

@@ -14,7 +14,6 @@
 	import AddBannerImage from './AddBannerImage.svelte';
 	import AddBookingLinks from './AddBookingLinks.svelte';
 
-	const links = [15, 20, 30];
 	let { data, form } = $props();
 
 	let alert = $state<{
@@ -63,7 +62,7 @@
 			</Button>
 
 			<div class="my-0.5 w-[1.5px] self-stretch rounded-full bg-gray-300"></div>
-			<AddBookingLinks {form} {alert}>
+			<AddBookingLinks username={data.bookingPage.username} {form} {alert}>
 				<div class="inline-flex items-center justify-center gap-1 text-sm font-medium">
 					<Plus class="" size="14" strokeWidth="2" />
 					<span>Add Booking Link</span>
@@ -157,7 +156,7 @@
 					<section class="grid w-full gap-2.5">
 						{#each data.bookingLinks as link (link)}
 							<a
-								href={resolve(`/dashboard/my-page/${link}`)}
+								href={resolve(`/dashboard/my-page/${link.url}`)}
 								class="group flex h-17 w-full items-center justify-between rounded-2xl border
 								border-gray-300 bg-[#E0DED9]/30 px-4 py-3 transition-all duration-75 ease-in hover:border-gray-500
 								hover:bg-white active:-translate-y-1 active:scale-[0.99] active:border-gray-800"
@@ -179,12 +178,14 @@
 						{/each}
 					</section>
 				{:else}
-					<h1 class="my-4 text-sm text-gray-500 italic">---- No Appointment Links Created ----</h1>
-					<button
-						class="h-fit w-fit max-w-xl cursor-pointer rounded-lg bg-blue-500 px-2 py-1.5 text-sm font-bold text-white"
-					>
-						Create Booking Links
-					</button>
+					<section class="grid place-items-center gap-1.5">
+						<h1 class="my-4 text-sm text-gray-500 italic">
+							---- No Appointment Links Created ----
+						</h1>
+						<AddBookingLinks username={data.bookingPage.username} {form} {alert}
+							>Create Booking Links</AddBookingLinks
+						>
+					</section>
 				{/if}
 			</section>
 		</section>

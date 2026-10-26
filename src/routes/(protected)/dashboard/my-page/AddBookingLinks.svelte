@@ -3,7 +3,8 @@
 	import Button from '$lib/client/components/ui/button.svelte';
 	import {
 		bookingLinkDescriptionSchema,
-		bookingLinkNameSchema
+		bookingLinkNameSchema,
+		bookingLinkUrlSchema
 	} from '$lib/validation-schemas/booking-links.js';
 	import { CircleAlert, CircleCheck, Minus, Plus, X } from '@lucide/svelte';
 	import { Dialog } from 'bits-ui';
@@ -14,6 +15,7 @@
 
 	type BookingLink = {
 		id: string;
+		url: string;
 		name: string;
 		description: string | null;
 		duration_minutes: number;
@@ -27,11 +29,13 @@
 	const {
 		children,
 		bookingLink = null,
+		username,
 		form,
 		alert
 	}: {
 		children: Snippet;
 		bookingLink?: BookingLink | null;
+		username: string;
 		form: ActionData;
 		alert: {
 			message: string;
@@ -44,6 +48,7 @@
 	let submitting = $state(false);
 
 	let name_value = $state('');
+	let url_value = $state('');
 	let desc_value = $state('');
 	let duration_value = $state<number>(DURATION_DEFAULT);
 
@@ -52,11 +57,13 @@
 	$effect(() => {
 		if (!open) return;
 		name_value = bookingLink?.name ?? '';
+		url_value = bookingLink?.url ?? '';
 		desc_value = bookingLink?.description ?? '';
 		duration_value = bookingLink?.duration_minutes ?? DURATION_DEFAULT;
 	});
 
 	let nameError = $state<string | null>(null);
+	let urlError = $state<string | null>(null);
 	let descriptionError = $state<string | null>(null);
 
 	function validateBookingName(event: Event) {
@@ -64,6 +71,13 @@
 		const input = event.target as HTMLInputElement;
 		const result = bookingLinkNameSchema.safeParse(input.value);
 		nameError = result.success ? null : (result.error.issues[0]?.message ?? 'Invalid name');
+	}
+
+	function validateBookingUrl(event: Event) {
+		urlError = null;
+		const input = event.target as HTMLInputElement;
+		const result = bookingLinkUrlSchema.safeParse(input.value);
+		urlError = result.success ? null : (result.error.issues[0]?.message ?? 'Invalid URL');
 	}
 
 	function validateBookingDescription(event: Event) {
@@ -113,7 +127,7 @@
 			</Dialog.Title>
 			<Dialog.Description class="text-sm text-foreground-alt">
 				{isEdit
-					? 'Update the name, description or duration of this link.'
+					? 'Update the name, URL, description or duration of this link.'
 					: 'Add a new meeting type people can book from your page.'}
 			</Dialog.Description>
 			<form
@@ -137,12 +151,10 @@
 
 				<div class="flex flex-col items-start gap-6 py-5">
 					<div class="relative grid w-full gap-1.5">
-						<label for="booking_link_name" class="text-sm font-bold text-gray-800"
-							>Title <span class="font-normal text-red-500">*</span></label
-						>
+						<label for="booking_link_name" class="text-sm font-medium text-gray-800">Title</label>
 						<input
 							id="booking_link_name"
-							class="w-full rounded-lg border-2 px-2.5 py-1.5 font-medium
+							class="w-full rounded-lg border-2 px-2.5 py-1.5 font-normal
 							{nameError ? 'border-red-400' : 'border-gray-600 '}
     						{submitting ? 'opacity-70' : ''}
     						text-sm transition-colors focus:border-blue-500 focus:ring-1
@@ -182,13 +194,62 @@
 						</div>
 					</div>
 
+					<div class="grid w-full gap-1.5">
+						<label for="booking_link_url" class="text-sm font-medium text-gray-800">URL</label>
+						<div
+							class="flex items-center overflow-hidden rounded-lg border-2 bg-white
+							{urlError ? 'border-red-400' : 'border-gray-600'}
+							focus-within:border-blue-500"
+						>
+							<span
+								class="border-r border-gray-300 bg-gray-100 px-2.5 py-1.5 text-sm text-gray-500"
+							>
+								/{username}/
+							</span>
+							<input
+								id="booking_link_url"
+								class="w-full border-0 px-2.5 py-1.5 text-sm font-normal ring-0
+								transition-colors focus:outline-none disabled:opacity-70"
+								placeholder="intro-call"
+								bind:value={url_value}
+								oninput={validateBookingUrl}
+								onblur={() => (url_value = url_value.trim().toLowerCase())}
+								disabled={submitting}
+								maxlength={60}
+								required
+								name="url"
+								aria-label="Booking link URL"
+							/>
+						</div>
+						<div class="mt-1 min-h-4 text-xs font-medium">
+							{#if form && alert && form.type === 'booking_link_url'}
+								<span
+									in:fly={{ y: -10, duration: 180, easing: cubicIn }}
+									out:fly={{ y: -10, duration: 180, easing: cubicOut }}
+									class="flex items-center gap-1 {form.success ? 'text-green-600' : 'text-red-500'}"
+								>
+									{#if form.success}
+										<CircleCheck size="16" strokeWidth="2" class="shrink-0" />
+									{:else}
+										<CircleAlert size="16" strokeWidth="2" class="shrink-0" />
+									{/if}
+									<span>{alert.message}</span>
+								</span>
+							{:else if !!urlError}
+								<span class="text-red-500">* {urlError}</span>
+							{:else}
+								<span class="text-gray-500">Must be unique on your page.</span>
+							{/if}
+						</div>
+					</div>
+
 					<div class="relative grid w-full gap-1.5">
-						<label for="booking_link_description" class="text-sm font-bold text-gray-800">
-							Description
-						</label>
+						<label for="booking_link_description" class="text-sm font-medium text-gray-800"
+							>Description</label
+						>
 						<textarea
 							id="booking_link_description"
-							class="max-h-25 min-h-20 w-full rounded-lg border-2 px-2.5 py-1.5 font-medium
+							class="max-h-25 min-h-20 w-full rounded-lg border-2 px-2.5 py-1.5 font-normal
 							{descriptionError ? 'border-red-400' : 'border-gray-600 '}
     						{submitting ? 'opacity-70' : ''}
     						text-sm transition-colors focus:border-blue-500 focus:ring-1
@@ -228,12 +289,12 @@
 
 					<div class="grid w-full gap-1.5">
 						<div class="flex items-center justify-between">
-							<label for="booking_link_duration" class="text-sm font-bold text-gray-800">
-								Duration <span class="font-normal text-red-500">*</span>
+							<label for="booking_link_duration" class="text-sm font-medium text-gray-800">
+								Duration
 							</label>
 							<span class="text-xs text-gray-500">5-minute steps</span>
 						</div>
-						<div class="flex items-center gap-2">
+						<div class="mt-1.5 flex items-center gap-2">
 							<Button
 								type="button"
 								variant="secondary"
@@ -256,7 +317,7 @@
 								disabled={submitting}
 								required
 								class="w-20 rounded-lg border-2 border-gray-600 px-2.5 py-1.5 text-center text-sm
-								font-bold transition-colors focus:border-blue-500 focus:ring-1
+								font-normal transition-colors focus:border-blue-500 focus:ring-1
 								focus:ring-transparent focus:outline-none disabled:opacity-70"
 								aria-label="Booking duration in minutes"
 							/>
@@ -273,7 +334,7 @@
 
 							<span class="text-sm text-gray-500">minutes</span>
 						</div>
-						<div class="mt-0.5 min-h-4 text-xs font-medium">
+						<div class="mt-1 min-h-4 text-xs font-medium">
 							{#if form && alert && form.type === 'booking_link_duration'}
 								<span
 									in:fly={{ y: -10, duration: 180, easing: cubicIn }}
@@ -293,7 +354,7 @@
 				</div>
 
 				<div class="flex w-full justify-end">
-					{#if !!nameError || !!descriptionError}
+					{#if !!nameError || !!urlError || !!descriptionError}
 						<Dialog.Close type="button">
 							<Button type="button" variant="ghost">Close</Button>
 						</Dialog.Close>

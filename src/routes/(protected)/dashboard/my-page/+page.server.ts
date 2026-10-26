@@ -12,7 +12,9 @@ import {
 } from '$lib/server/db/queries/booking_page.js';
 import {
 	createBookingLink,
+	deleteBookingLink,
 	getBookingLinkById,
+	getBookingLinkByPageIdAndUrl,
 	getBookingLinksByPageId,
 	updateBookingLink
 } from '$lib/server/db/queries/booking_links.js';
@@ -25,7 +27,8 @@ import {
 import {
 	bookingLinkDescriptionSchema,
 	bookingLinkDurationSchema,
-	bookingLinkNameSchema
+	bookingLinkNameSchema,
+	bookingLinkUrlSchema
 } from '$lib/validation-schemas/booking-links.js';
 
 const field = (form: FormData, key: string) => String(form.get(key) ?? '');
@@ -39,6 +42,7 @@ type FieldType =
 	| 'booking_page'
 	| 'booking_link'
 	| 'booking_link_name'
+	| 'booking_link_url'
 	| 'booking_link_description'
 	| 'booking_link_duration';
 
@@ -87,7 +91,7 @@ export const actions: Actions = {
 		if (!parsed.success) {
 			return failWith(400, 'name', parsed.error.issues[0]?.message ?? 'Invalid display name.');
 		}
-		console.log({ user });
+
 		const page = await updateBookingPageDisplayName({
 			user_id: user.id,
 			display_name: parsed.data
@@ -245,6 +249,15 @@ export const actions: Actions = {
 			);
 		}
 
+		const parsedUrl = bookingLinkUrlSchema.safeParse(field(form, 'url'));
+		if (!parsedUrl.success) {
+			return failWith(
+				400,
+				'booking_link_url',
+				parsedUrl.error.issues[0]?.message ?? 'Invalid URL.'
+			);
+		}
+
 		const parsedDescription = bookingLinkDescriptionSchema.safeParse(field(form, 'description'));
 		if (!parsedDescription.success) {
 			return failWith(
@@ -263,14 +276,30 @@ export const actions: Actions = {
 			);
 		}
 
-		const link = await createBookingLink({
+		const urlTaken = await getBookingLinkByPageIdAndUrl({
 			booking_page_id: page.id,
-			name: parsedName.data,
-			description: parsedDescription.data,
-			duration_minutes: parsedDuration.data
+			url: parsedUrl.data
 		});
+		if (urlTaken) {
+			return failWith(409, 'booking_link_url', 'That URL is already used on this page.');
+		}
 
-		return { ...ok('booking_link', 'Booking link created.'), link };
+		try {
+			const link = await createBookingLink({
+				booking_page_id: page.id,
+				url: parsedUrl.data,
+				name: parsedName.data,
+				description: parsedDescription.data,
+				duration_minutes: parsedDuration.data
+			});
+
+			return { ...ok('booking_link', 'Booking link created.'), link };
+		} catch (err) {
+			if (isUniqueViolation(err)) {
+				return failWith(409, 'booking_link_url', 'That URL is already used on this page.');
+			}
+			throw err;
+		}
 	},
 
 	update_booking_link: async ({ request, locals }) => {
@@ -298,6 +327,15 @@ export const actions: Actions = {
 			);
 		}
 
+		const parsedUrl = bookingLinkUrlSchema.safeParse(field(form, 'url'));
+		if (!parsedUrl.success) {
+			return failWith(
+				400,
+				'booking_link_url',
+				parsedUrl.error.issues[0]?.message ?? 'Invalid URL.'
+			);
+		}
+
 		const parsedDescription = bookingLinkDescriptionSchema.safeParse(field(form, 'description'));
 		if (!parsedDescription.success) {
 			return failWith(
@@ -316,14 +354,52 @@ export const actions: Actions = {
 			);
 		}
 
-		const link = await updateBookingLink({
-			id,
-			name: parsedName.data,
-			description: parsedDescription.data,
-			duration_minutes: parsedDuration.data
+		const urlTaken = await getBookingLinkByPageIdAndUrl({
+			booking_page_id: page.id,
+			url: parsedUrl.data
 		});
+		if (urlTaken && urlTaken.id !== id) {
+			return failWith(409, 'booking_link_url', 'That URL is already used on this page.');
+		}
+
+		try {
+			const link = await updateBookingLink({
+				id,
+				url: parsedUrl.data,
+				name: parsedName.data,
+				description: parsedDescription.data,
+				duration_minutes: parsedDuration.data
+			});
+			if (!link) return failWith(404, 'booking_link', 'Booking link not found.');
+
+			return { ...ok('booking_link', 'Booking link updated.'), link };
+		} catch (err) {
+			if (isUniqueViolation(err)) {
+				return failWith(409, 'booking_link_url', 'That URL is already used on this page.');
+			}
+			throw err;
+		}
+	},
+
+	delete_booking_link: async ({ request, locals }) => {
+		const user = requireUser(locals);
+
+		const page = await getBookingPageByUserId({ user_id: user.id });
+		if (!page) return failWith(404, 'booking_link', 'Booking page not found.');
+
+		const form = await request.formData();
+		const id = field(form, 'id');
+		if (!id) return failWith(400, 'booking_link', 'Booking link id is required.');
+
+		// Ownership check: never delete a link that belongs to another page.
+		const existing = await getBookingLinkById({ id });
+		if (!existing || existing.booking_page_id !== page.id) {
+			return failWith(404, 'booking_link', 'Booking link not found.');
+		}
+
+		const link = await deleteBookingLink({ id });
 		if (!link) return failWith(404, 'booking_link', 'Booking link not found.');
 
-		return { ...ok('booking_link', 'Booking link updated.'), link };
+		return ok('booking_link', 'Booking link deleted.');
 	}
 };

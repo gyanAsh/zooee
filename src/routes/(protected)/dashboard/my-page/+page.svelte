@@ -65,8 +65,12 @@
 		>
 			<Button variant="secondary" onclick={() => (allowEdit = !allowEdit)}>
 				<div class="inline-flex items-center justify-center gap-1 text-sm font-medium">
-					<PencilSparkles size="14" strokeWidth="2" />
-					<span>Edit Profile</span>
+					{#if !allowEdit}
+						<PencilSparkles size="14" strokeWidth="2" />
+						<span>Edit Profile</span>
+					{:else}
+						<span>Save Profile</span>
+					{/if}
 				</div>
 			</Button>
 
@@ -200,7 +204,7 @@
 						{#each data.bookingLinks as link (link)}
 							<a
 								href={allowEdit ? null : resolve(`/dashboard/my-page/${link.url}`)}
-								class="group flex h-17 w-full items-center justify-between rounded-2xl border
+								class="group flex min-h-17 w-full items-center justify-between rounded-2xl border
 								{allowEdit
 									? 'border-dashed border-blue-300	hover:border-blue-500'
 									: 'active:-translate-y-1 active:scale-[0.99] active:border-gray-800'}
@@ -209,17 +213,19 @@
 							>
 								<div class="grid">
 									<h1 class=" truncate font-medium">{link.name}</h1>
-									<p class="truncate">{link.description}</p>
+									<p class="line-clamp-2 text-ellipsis">
+										{link.description}
+									</p>
 								</div>
 								<div
 									class="grid h-full min-w-fit place-items-center
 								{allowEdit ? 'grid-cols-3' : 'grid-cols-1'}"
 								>
 									<div
-										class="flex items-center gap-0.5 font-medium
-									  text-gray-800"
+										class="flex items-center gap-0.5 rounded-lg bg-[#E0DED9]/80 px-1 py-0.5 font-medium
+									  text-gray-800 group-hover:bg-[#E0DED9]/30"
 									>
-										<Clock3 size="16" stroke-width="2.5" />
+										<Clock3 size="14" stroke-width="2.5" />
 										<span>{link.duration_minutes} m</span>
 									</div>
 									{#if allowEdit}

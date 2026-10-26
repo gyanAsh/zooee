@@ -3,8 +3,8 @@
 </script>
 
 <section
-	class="group relative cursor-[url('/svg/edit_pen.svg')_12_12,pointer] rounded-lg border border-dashed border-transparent transition-all duration-200
-		  hover:border-gray-300 hover:bg-gray-100 hover:text-[#111828] active:border-gray-500 active:bg-[#e5e7eb]
+	class="group relative cursor-[url('/svg/edit_pen.svg')_12_12,pointer] rounded border border-dashed border-blue-400 px-1 py-0.5 transition-all duration-200
+		  hover:border-blue-300 hover:bg-gray-100 hover:text-[#111828] active:border-blue-500 active:bg-[#e5e7eb]
 			{isActive ? '' : ''}"
 >
 	{@render children()}

@@ -3,7 +3,7 @@
 	import type { Snippet } from 'svelte';
 	import type { HTMLButtonAttributes } from 'svelte/elements';
 
-	type Variant = 'primary' | 'secondary' | 'black' | 'ghost';
+	type Variant = 'primary' | 'secondary' | 'black' | 'ghost' | 'danger';
 
 	// Extend native button attributes, narrowing `type` to the 3 valid values.
 	// Everything else (onclick, disabled, aria-*, form, name, …) comes from
@@ -34,6 +34,7 @@
 		variant === 'primary' && 'primary_btn',
 		variant === 'secondary' && 'secondary_btn',
 		variant === 'black' && 'black_btn',
+		variant === 'danger' && 'danger_btn',
 		variant === 'ghost' && (isActive ? 'primary_btn' : 'ghost_btn')
 	]
 		.filter(Boolean)
@@ -63,7 +64,23 @@
 		translate: 0 1px;
 		box-shadow: inset 0 2px 4px #0004;
 	}
+	:global(.danger_btn) {
+		background: linear-gradient(#ef4444, #ef4444);
 
+		color: white;
+		box-shadow:
+			inset 0 1px 0 #ffffff56,
+			inset 0 -2px 0 #0003,
+			0 1px 2px #0006,
+			0 8px 24px -6px #fca5a599;
+	}
+	:global(.danger_btn:hover) {
+		background: linear-gradient(#f87171, #ef4444);
+	}
+	:global(.danger_btn:active) {
+		translate: 0 1px;
+		box-shadow: inset 0 2px 4px #0004;
+	}
 	:global(.black_btn) {
 		background: linear-gradient(#18181b, #27272a);
 

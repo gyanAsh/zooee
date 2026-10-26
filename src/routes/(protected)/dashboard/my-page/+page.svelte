@@ -203,13 +203,15 @@
 					<section class="grid w-full gap-2.5">
 						{#each data.bookingLinks as link (link)}
 							<a
-								href={allowEdit ? null : resolve(`/dashboard/my-page/${link.url}`)}
+								href={allowEdit
+									? null
+									: resolve(`/dashboard/my-page/${data.bookingPage.username}/${link.url}`)}
 								class="group flex min-h-17 w-full items-center justify-between rounded-2xl border
-								{allowEdit
+    								{allowEdit
 									? 'border-dashed border-blue-300	hover:border-blue-500'
 									: 'active:-translate-y-1 active:scale-[0.99] active:border-gray-800'}
-							 bg-[#E0DED9]/30 px-4 py-3 transition-all duration-75 ease-in
-								hover:bg-white"
+								    bg-[#E0DED9]/30 px-4 py-3 transition-all duration-75 ease-in
+									hover:bg-white"
 							>
 								<div class="grid">
 									<h1 class=" truncate font-medium">{link.name}</h1>

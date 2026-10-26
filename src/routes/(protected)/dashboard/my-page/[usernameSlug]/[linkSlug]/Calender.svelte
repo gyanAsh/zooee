@@ -1,4 +1,5 @@
 <script>
+	import { booking_store } from '$lib/client/client-state/booking.svelte.js';
 	import { LucideChevronLeft, LucideChevronRight } from '@lucide/svelte';
 	let dates = [
 		'null1',
@@ -58,12 +59,23 @@
 		{/each}
 		{#each dates as date (date)}
 			{#if typeof date === 'number'}
-				<p
-					class="col-span-1 aspect-square w-full cursor-pointer content-center rounded-lg border bg-[#E0DED9]/30
-						text-center text-gray-900 transition-all duration-75 ease-in hover:bg-gray-900 hover:text-gray-50"
+				<button
+					class="col-span-1 aspect-square w-full cursor-pointer content-center rounded-lg border
+						text-center transition-all duration-75 ease-in hover:bg-gray-900 hover:text-gray-50
+						{date === booking_store.booking_date.day
+						? 'bg-gray-900 text-gray-50'
+						: ' bg-[#E0DED9]/30 text-gray-900'}"
+					onclick={() => {
+						booking_store.booking_date = {
+							day: date,
+							month: 0,
+							year: 0,
+							week: 'Wednesday'
+						};
+					}}
 				>
 					{date}
-				</p>
+				</button>
 			{:else}
 				<p class=" col-span-1 aspect-square w-full content-center rounded-lg text-center"></p>
 			{/if}

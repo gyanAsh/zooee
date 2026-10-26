@@ -6,8 +6,11 @@
 	import { cubicOut } from 'svelte/easing';
 	import UserDetails from './UserDetails.svelte';
 	import { Plus, Settings } from '@lucide/svelte';
+	import { booking_store } from '$lib/client/client-state/booking.svelte.js';
 
+	let { data } = $props();
 	let tab_state = $state<'booking' | 'user_details'>('booking');
+	let dateSelected = $derived(booking_store.booking_date.day > 0);
 </script>
 
 <section
@@ -32,10 +35,17 @@
 		</button>
 	</section>
 	<div
-		class="my-auto grid aspect-10/5 w-full max-w-4xl grid-cols-12 gap-5 bg-[#FCFBF7] p-5 shadow-2xl md:mx-5 md:rounded-4xl md:border"
+		class="my-auto grid aspect-10/5 w-full grid-cols-12 gap-5 bg-[#FCFBF7] p-5 shadow-2xl md:mx-5 md:rounded-4xl md:border
+		{!dateSelected || tab_state === 'user_details' ? 'max-w-2xl' : 'max-w-4xl'}"
 	>
 		<section class=" col-span-12 md:col-span-4">
-			<AppointmentInfo />
+			<AppointmentInfo
+				name={data.bookingPage.display_name}
+				bio={data.bookingPage.bio}
+				description={data.bookingLink.description}
+				duration={data.bookingLink.duration_minutes}
+				title={data.bookingLink.name}
+			/>
 		</section>
 		<section class="col-span-12 flex flex-col gap-5 md:col-span-8">
 			<div class="text-sm">
@@ -55,13 +65,15 @@
 				</section>
 			</div>
 			{#if tab_state === 'booking'}
-				<div class="grid gap-5 sm:grid-cols-8">
+				<div class="grid gap-5 {dateSelected ? 'sm:grid-cols-8' : 'sm:grid-cols-6'}">
 					<section class="grid gap-2.5 sm:col-span-6">
 						<Calender />
 					</section>
-					<section class="sm:col-span-2">
-						<TimeSlot />
-					</section>
+					{#if dateSelected}
+						<section class="sm:col-span-2">
+							<TimeSlot />
+						</section>
+					{/if}
 				</div>
 			{:else if tab_state === 'user_details'}
 				<UserDetails />

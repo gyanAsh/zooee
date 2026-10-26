@@ -21,6 +21,7 @@
 	import NoBookingIDFound from './NoBookingIDFound.svelte';
 	import AddBannerImage from './AddBannerImage.svelte';
 	import AddBookingLinks from './AddBookingLinks.svelte';
+	import { enhance } from '$app/forms';
 
 	let { data, form } = $props();
 
@@ -239,12 +240,15 @@
 												<h2 class="text-sm">Edit</h2>
 											</div>
 										</AddBookingLinks>
-										<Button variant="danger">
-											<div class="flex items-center gap-1">
-												<Trash size="14" strokeWidth="2" />
-												<h2 class="text-sm">Delete</h2>
-											</div>
-										</Button>
+										<form method="POST" action="?/delete_booking_link" use:enhance>
+											<input type="hidden" name="id" value={link.id} />
+											<Button type="submit" variant="danger" aria-label="Delete {link.name}">
+												<div class="flex items-center gap-1">
+													<Trash size="14" strokeWidth="2" />
+													<h2 class="text-sm">Delete</h2>
+												</div>
+											</Button>
+										</form>
 									{/if}
 								</div>
 							</a>

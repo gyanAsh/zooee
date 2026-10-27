@@ -14,7 +14,7 @@
 </script>
 
 <section
-	class="scrollbar-custom relative flex h-full justify-center overflow-auto rounded-sm bg-[#E0DED9]"
+	class="relative flex h-full justify-center overflow-auto rounded-sm bg-[#E0DED9]"
 	in:fly={{ y: -10, duration: 130, easing: cubicOut }}
 >
 	<section
@@ -35,7 +35,7 @@
 		</button>
 	</section>
 	<div
-		class="my-auto grid aspect-10/5 w-full grid-cols-12 gap-5 bg-[#FCFBF7] p-5 shadow-2xl md:mx-5 md:rounded-4xl md:border
+		class="grid aspect-10/5 h-fit w-full grid-cols-12 gap-5 bg-[#FCFBF7] p-5 shadow-2xl md:mx-5 md:mt-25 md:rounded-4xl md:border
 		{!dateSelected || tab_state === 'user_details' ? 'max-w-3xl' : 'max-w-4xl'}"
 	>
 		<section
@@ -64,7 +64,7 @@
 				<section
 					class="grid grid-cols-2 gap-2.5 {!dateSelected || tab_state === 'user_details'
 						? 'col-span-12'
-						: 'col-span-3'}"
+						: 'col-span-4 sm:col-span-3'}"
 				>
 					<button
 						data-selected={tab_state === 'booking'}

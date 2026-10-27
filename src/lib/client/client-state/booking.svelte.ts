@@ -1,8 +1,12 @@
+export type Weekday =
+	'Sunday' | 'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday' | 'Saturday';
+
 export interface BookingDate {
 	day: number;
+	/** 1-12 */
 	month: number;
 	year: number;
-	week: 'Wednesday';
+	week: Weekday;
 }
 
 export interface BookingSlot {

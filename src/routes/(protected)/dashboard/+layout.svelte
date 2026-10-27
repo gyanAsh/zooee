@@ -12,6 +12,7 @@
 	import { cubicIn, cubicOut } from 'svelte/easing';
 	import Button from '$lib/client/components/ui/button.svelte';
 	import { goto } from '$app/navigation';
+	import ScrollArea from '$lib/client/components/ui/scroll-area.svelte';
 
 	const { children } = $props();
 

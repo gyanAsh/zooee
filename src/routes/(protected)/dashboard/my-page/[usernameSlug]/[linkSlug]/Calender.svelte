@@ -58,13 +58,12 @@
 			<h2 class="col-span-1 mb-1 text-center text-xs">{day}</h2>
 		{/each}
 		{#each dates as date (date)}
+			{@const selected = date === booking_store.booking_date.day}
 			{#if typeof date === 'number'}
 				<button
 					class="col-span-1 aspect-square w-full cursor-pointer content-center rounded-lg border
-						text-center transition-all duration-75 ease-in hover:bg-gray-900 hover:text-gray-50
-						{date === booking_store.booking_date.day
-						? 'bg-gray-900 text-gray-50'
-						: ' bg-[#E0DED9]/30 text-gray-900'}"
+						text-center transition-all duration-75 ease-in hover:text-gray-50
+						{selected ? 'bg-gray-900 text-gray-50 hover:bg-gray-900 ' : 'bg-[#E0DED9]/30 hover:bg-zinc-500 '}"
 					onclick={() => {
 						booking_store.booking_date = {
 							day: date,

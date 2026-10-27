@@ -38,7 +38,11 @@
 		class="my-auto grid aspect-10/5 w-full grid-cols-12 gap-5 bg-[#FCFBF7] p-5 shadow-2xl md:mx-5 md:rounded-4xl md:border
 		{!dateSelected || tab_state === 'user_details' ? 'max-w-3xl' : 'max-w-4xl'}"
 	>
-		<section class=" col-span-12 {dateSelected ? 'md:col-span-4' : 'md:col-span-5'}">
+		<section
+			class=" col-span-12 {!dateSelected || tab_state === 'user_details'
+				? 'md:col-span-5'
+				: 'md:col-span-4'}"
+		>
 			<AppointmentInfo
 				name={data.bookingPage.display_name}
 				bio={data.bookingPage.bio}
@@ -48,19 +52,31 @@
 			/>
 		</section>
 		<section
-			class="col-span-12 flex flex-col gap-5 {dateSelected ? 'md:col-span-8' : 'md:col-span-7'}"
+			class="col-span-12 flex flex-col gap-5 {!dateSelected || tab_state === 'user_details'
+				? 'md:col-span-7'
+				: 'md:col-span-8'}"
 		>
-			<div class="text-sm">
-				<section class="grid grid-cols-2">
+			<div
+				class="grid text-sm {!dateSelected || tab_state === 'user_details'
+					? 'grid-cols-12'
+					: 'grid-cols-4'}"
+			>
+				<section
+					class="grid grid-cols-2 gap-2.5 {!dateSelected || tab_state === 'user_details'
+						? 'col-span-12'
+						: 'col-span-3'}"
+				>
 					<button
 						data-selected={tab_state === 'booking'}
 						class="cursor-pointer rounded-lg border px-2 py-1.5
+
 						data-[selected=true]:bg-gray-900 data-[selected=true]:text-gray-50"
 						onclick={() => (tab_state = 'booking')}>Select Date & Time</button
 					>
 					<button
 						data-selected={tab_state === 'user_details'}
 						class="cursor-pointer rounded-lg border px-2 py-1.5
+
 						data-[selected=true]:bg-gray-900 data-[selected=true]:text-gray-50"
 						onclick={() => (tab_state = 'user_details')}>Fill Details</button
 					>

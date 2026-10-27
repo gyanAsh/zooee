@@ -2,15 +2,21 @@
 	import { ScrollArea } from 'bits-ui';
 	import type { Snippet } from 'svelte';
 	type CSSLength =
-		`${number}px` | `${number}rem` | `${number}em` | `${number}vh` | `${number}vw` | `${number}%`;
+		| `${number}px`
+		| `${number}rem`
+		| `${number}em`
+		| `${number}vh`
+		| `${number}vw`
+		| `${number}%`
+		| 'fit-content';
 
-	type PropTypes = { maxHeight: CSSLength; children: Snippet };
+	type PropTypes = { maxHeight: CSSLength; width?: CSSLength; children: Snippet };
 
-	let { maxHeight, children }: PropTypes = $props();
+	let { maxHeight, width = 'fit-content', children }: PropTypes = $props();
 </script>
 
 <ScrollArea.Root class="relative overflow-hidden">
-	<ScrollArea.Viewport class="h-full w-fit" style="max-height: {maxHeight}">
+	<ScrollArea.Viewport class="h-full" style="max-height: {maxHeight}; width: {width}">
 		{@render children()}
 	</ScrollArea.Viewport>
 	<ScrollArea.Scrollbar

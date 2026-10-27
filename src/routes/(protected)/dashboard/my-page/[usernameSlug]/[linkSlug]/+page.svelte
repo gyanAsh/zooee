@@ -36,9 +36,9 @@
 	</section>
 	<div
 		class="my-auto grid aspect-10/5 w-full grid-cols-12 gap-5 bg-[#FCFBF7] p-5 shadow-2xl md:mx-5 md:rounded-4xl md:border
-		{!dateSelected || tab_state === 'user_details' ? 'max-w-2xl' : 'max-w-4xl'}"
+		{!dateSelected || tab_state === 'user_details' ? 'max-w-3xl' : 'max-w-4xl'}"
 	>
-		<section class=" col-span-12 md:col-span-4">
+		<section class=" col-span-12 {dateSelected ? 'md:col-span-4' : 'md:col-span-5'}">
 			<AppointmentInfo
 				name={data.bookingPage.display_name}
 				bio={data.bookingPage.bio}
@@ -47,7 +47,9 @@
 				title={data.bookingLink.name}
 			/>
 		</section>
-		<section class="col-span-12 flex flex-col gap-5 md:col-span-8">
+		<section
+			class="col-span-12 flex flex-col gap-5 {dateSelected ? 'md:col-span-8' : 'md:col-span-7'}"
+		>
 			<div class="text-sm">
 				<section class="grid grid-cols-2">
 					<button

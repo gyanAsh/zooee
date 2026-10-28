@@ -1,6 +1,12 @@
 <script lang="ts">
-	import { booking_store } from '$lib/client/client-state/booking.svelte';
+	import {
+		add_minutes_to_slot,
+		booking_store,
+		format_booking_date,
+		format_booking_slot
+	} from '$lib/client/client-state/booking.svelte';
 	import ScrollArea from '$lib/client/components/ui/scroll-area.svelte';
+	import Select from '$lib/client/components/ui/select.svelte';
 	import Tooltip from '$lib/client/components/ui/tooltip.svelte';
 	import { BriefcaseBusiness, Clock, MapPin } from '@lucide/svelte';
 
@@ -13,6 +19,25 @@
 	};
 
 	let { name, bio, description, title, duration }: PropTypes = $props();
+
+	const timezone_options = $derived.by(() => {
+		const supported =
+			typeof Intl.supportedValuesOf === 'function' ? Intl.supportedValuesOf('timeZone') : [];
+		const zones = supported.includes(booking_store.timezone)
+			? supported
+			: [booking_store.timezone, ...supported];
+
+		return zones.map((timezone) => ({
+			value: timezone,
+			label: timezone.replaceAll('_', ' ')
+		}));
+	});
+
+	const selected_date = $derived(format_booking_date(booking_store.booking_date));
+	const selected_start_time = $derived(format_booking_slot(booking_store.booking_slot));
+	const selected_end_time = $derived(
+		format_booking_slot(add_minutes_to_slot(booking_store.booking_slot, duration))
+	);
 </script>
 
 <section class="flex h-full flex-col gap-5 text-sm">
@@ -68,9 +93,9 @@
 			<BriefcaseBusiness stroke-width="2" size={16} class="  text-gray-500" />
 			{#if booking_store.booking_date.day > 0}
 				<h1 class="font-bold">
-					{booking_store.booking_date.week} :
+					{selected_date} :
 					<span class="inline-flex font-medium text-gray-900"
-						>{booking_store.booking_slot.slot_hour}:{booking_store.booking_slot.slot_mins} - time+15mins</span
+						>{selected_start_time} - {selected_end_time}</span
 					>
 				</h1>
 			{:else}
@@ -81,9 +106,13 @@
 		</div>
 		<div class="inline-flex items-center justify-start gap-2.5">
 			<MapPin stroke-width="2" size={16} class="  text-gray-500" />
-			<h1 class="font-bold">
-				India - <span class="inline-flex font-medium text-gray-900">Mumbai</span>
-			</h1>
+			<Select
+				items={timezone_options}
+				bind:value={booking_store.timezone}
+				placeholder="Select timezone"
+				ariaLabel="Select timezone"
+				triggerClass="inline-flex h-8 w-fit min-w-44 max-w-64 touch-none items-center overflow-hidden rounded-lg border border-gray-200 bg-white px-2.5 text-left text-sm transition-colors select-none data-placeholder:text-gray-400"
+			/>
 		</div>
 		<!-- Thus user's available hours are 9-5 from india. -->
 	</div>

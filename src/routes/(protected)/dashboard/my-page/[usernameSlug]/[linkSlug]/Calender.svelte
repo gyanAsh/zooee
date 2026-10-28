@@ -1,5 +1,9 @@
 <script lang="ts">
-	import { booking_store, type Weekday } from '$lib/client/client-state/booking.svelte.js';
+	import {
+		booking_store,
+		get_timezone_date,
+		type Weekday
+	} from '$lib/client/client-state/booking.svelte.js';
 	import { LucideChevronLeft, LucideChevronRight } from '@lucide/svelte';
 
 	const weekdays = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
@@ -27,20 +31,38 @@
 		'December'
 	];
 
-	const today = new Date();
-	const today_start = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+	const today_in_timezone = $derived(get_timezone_date(booking_store.timezone));
+	const today_start = $derived(
+		new Date(today_in_timezone.year, today_in_timezone.month - 1, today_in_timezone.day)
+	);
 
-	const initial_view =
-		booking_store.booking_date.day > 0 && booking_store.booking_date.year > 0
-			? new Date(
-					booking_store.booking_date.year,
-					booking_store.booking_date.month - 1,
-					booking_store.booking_date.day
-				)
-			: today;
+	function get_selected_date() {
+		if (booking_store.booking_date.day > 0 && booking_store.booking_date.year > 0) {
+			return new Date(
+				booking_store.booking_date.year,
+				booking_store.booking_date.month - 1,
+				booking_store.booking_date.day
+			);
+		}
+
+		return today_start;
+	}
+
+	const initial_view = get_selected_date();
 
 	let view_year = $state(initial_view.getFullYear());
 	let view_month = $state(initial_view.getMonth());
+
+	let last_timezone = booking_store.timezone;
+	$effect(() => {
+		const timezone = booking_store.timezone;
+		if (timezone === last_timezone) return;
+		last_timezone = timezone;
+
+		const selected = get_selected_date();
+		view_year = selected.getFullYear();
+		view_month = selected.getMonth();
+	});
 
 	const first_weekday = $derived(new Date(view_year, view_month, 1).getDay());
 	const days_in_month = $derived(new Date(view_year, view_month + 1, 0).getDate());
@@ -51,8 +73,8 @@
 	});
 
 	const can_go_back = $derived(
-		view_year > today.getFullYear() ||
-			(view_year === today.getFullYear() && view_month > today.getMonth())
+		view_year > today_in_timezone.year ||
+			(view_year === today_in_timezone.year && view_month > today_in_timezone.month - 1)
 	);
 
 	function change_month(offset: number) {
@@ -67,9 +89,9 @@
 
 	function is_today(day: number) {
 		return (
-			view_year === today.getFullYear() &&
-			view_month === today.getMonth() &&
-			day === today.getDate()
+			view_year === today_in_timezone.year &&
+			view_month === today_in_timezone.month - 1 &&
+			day === today_in_timezone.day
 		);
 	}
 
@@ -119,36 +141,38 @@
 		{#each weekdays as day (day)}
 			<h2 class="col-span-1 mb-1 text-center text-xs">{day}</h2>
 		{/each}
-		{#each cells as date, index (`${view_year}-${view_month}-${index}`)}
-			{#if date === null}
-				<p class="col-span-1 aspect-square w-full"></p>
-			{:else}
-				{@const selected = is_selected(date)}
-				{@const disabled = is_past(date)}
-				{@const current = is_today(date)}
-				<button
-					type="button"
-					class="relative col-span-1 flex aspect-square w-full items-center justify-center rounded-lg border
+		<section class="col-span-7 grid grid-cols-7 grid-rows-6 gap-1.5">
+			{#each cells as date, index (`${view_year}-${view_month}-${index}`)}
+				{#if date === null}
+					<p class="col-span-1 aspect-square w-full"></p>
+				{:else}
+					{@const selected = is_selected(date)}
+					{@const disabled = is_past(date)}
+					{@const current = is_today(date)}
+					<button
+						type="button"
+						class="relative col-span-1 flex aspect-square w-full items-center justify-center rounded-lg border
 					text-center transition-all duration-75 ease-in
 						{selected
-						? 'bg-gray-900 text-gray-50 hover:bg-gray-900'
-						: disabled
-							? 'cursor-not-allowed bg-[#E0DED9]/30 text-gray-400'
-							: 'cursor-pointer bg-[#E0DED9]/30 hover:bg-zinc-500 hover:text-gray-50'}"
-					aria-label="{month_names[view_month]} {date}, {view_year}{current ? ' (today)' : ''}"
-					aria-pressed={selected}
-					{disabled}
-					onclick={() => select_date(date)}
-				>
-					{#if current}
-						<span
-							class="absolute top-1 right-0 size-1.5 -translate-x-1/2 rounded-full bg-red-500"
-							aria-hidden="true"
-						></span>
-					{/if}
-					{date}
-				</button>
-			{/if}
-		{/each}
+							? 'bg-gray-900 text-gray-50 hover:bg-gray-900'
+							: disabled
+								? 'cursor-not-allowed bg-[#E0DED9]/30 text-gray-400'
+								: 'cursor-pointer bg-[#E0DED9]/30 hover:bg-zinc-500 hover:text-gray-50'}"
+						aria-label="{month_names[view_month]} {date}, {view_year}{current ? ' (today)' : ''}"
+						aria-pressed={selected}
+						{disabled}
+						onclick={() => select_date(date)}
+					>
+						{#if current}
+							<span
+								class="absolute top-1 right-0 size-1.5 -translate-x-1/2 rounded-full bg-red-500"
+								aria-hidden="true"
+							></span>
+						{/if}
+						{date}
+					</button>
+				{/if}
+			{/each}
+		</section>
 	</div>
 </section>

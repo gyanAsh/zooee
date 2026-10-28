@@ -28,3 +28,5 @@ test-results
 # Testing and Work-in-progress Dirs.
 src/routes/api/test/*
 src/routes/test/*
+test-folio.mjs
+test.pdf

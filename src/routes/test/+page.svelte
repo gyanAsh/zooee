@@ -13,6 +13,12 @@
 		const resdata = await res.json();
 		console.log({ resdata });
 	};
+
+	const runApp = async () => {
+		// Download the result
+		const api_key = 'pf_live_GlIxYU8t96k5Lsk4yFuCqHk5G9xPxaPJ';
+		const website = 'https://dodopayments.com';
+	};
 </script>
 
 <section class="grid place-items-center gap-1">

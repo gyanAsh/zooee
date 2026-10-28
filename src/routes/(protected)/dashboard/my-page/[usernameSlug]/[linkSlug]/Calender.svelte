@@ -1,39 +1,22 @@
 <script lang="ts">
-	import {
-		booking_store,
-		get_timezone_date,
-		type Weekday
-	} from '$lib/client/client-state/booking.svelte.js';
+	import { booking_store, type Weekday } from '$lib/client/client-state/booking.svelte.js';
 	import { LucideChevronLeft, LucideChevronRight } from '@lucide/svelte';
+	import {
+		addMonths,
+		format,
+		getDay,
+		getDaysInMonth,
+		getMonth,
+		getYear,
+		isBefore,
+		isSameDay,
+		startOfMonth
+	} from 'date-fns';
 
 	const weekdays = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
-	const weekday_names: Weekday[] = [
-		'Sunday',
-		'Monday',
-		'Tuesday',
-		'Wednesday',
-		'Thursday',
-		'Friday',
-		'Saturday'
-	];
-	const month_names = [
-		'January',
-		'February',
-		'March',
-		'April',
-		'May',
-		'June',
-		'July',
-		'August',
-		'September',
-		'October',
-		'November',
-		'December'
-	];
 
-	const today_in_timezone = $derived(get_timezone_date(booking_store.timezone));
 	const today_start = $derived(
-		new Date(today_in_timezone.year, today_in_timezone.month - 1, today_in_timezone.day)
+		new Date(booking_store.today.year, booking_store.today.month - 1, booking_store.today.day)
 	);
 
 	function get_selected_date() {
@@ -48,51 +31,35 @@
 		return today_start;
 	}
 
-	const initial_view = get_selected_date();
+	let view_date = $state(get_selected_date());
+	const view_year = $derived(getYear(view_date));
+	const view_month = $derived(getMonth(view_date));
 
-	let view_year = $state(initial_view.getFullYear());
-	let view_month = $state(initial_view.getMonth());
-
-	let last_timezone = booking_store.timezone;
-	$effect(() => {
-		const timezone = booking_store.timezone;
-		if (timezone === last_timezone) return;
-		last_timezone = timezone;
-
-		const selected = get_selected_date();
-		view_year = selected.getFullYear();
-		view_month = selected.getMonth();
-	});
-
-	const first_weekday = $derived(new Date(view_year, view_month, 1).getDay());
-	const days_in_month = $derived(new Date(view_year, view_month + 1, 0).getDate());
+	const month_label = $derived(format(view_date, 'MMMM yyyy'));
+	const first_weekday = $derived(getDay(startOfMonth(view_date)));
+	const days_in_month = $derived(getDaysInMonth(view_date));
 	const cells = $derived.by(() => {
 		const days: (number | null)[] = Array.from({ length: first_weekday }, () => null);
 		for (let day = 1; day <= days_in_month; day++) days.push(day);
 		return days;
 	});
 
-	const can_go_back = $derived(
-		view_year > today_in_timezone.year ||
-			(view_year === today_in_timezone.year && view_month > today_in_timezone.month - 1)
-	);
+	const can_go_back = $derived(isBefore(startOfMonth(today_start), startOfMonth(view_date)));
 
 	function change_month(offset: number) {
-		const next = new Date(view_year, view_month + offset, 1);
-		view_year = next.getFullYear();
-		view_month = next.getMonth();
+		view_date = addMonths(view_date, offset);
+	}
+
+	function date_in_view(day: number) {
+		return new Date(view_year, view_month, day);
 	}
 
 	function is_past(day: number) {
-		return new Date(view_year, view_month, day) < today_start;
+		return isBefore(date_in_view(day), today_start);
 	}
 
 	function is_today(day: number) {
-		return (
-			view_year === today_in_timezone.year &&
-			view_month === today_in_timezone.month - 1 &&
-			day === today_in_timezone.day
-		);
+		return isSameDay(date_in_view(day), today_start);
 	}
 
 	function is_selected(day: number) {
@@ -104,12 +71,12 @@
 	}
 
 	function select_date(day: number) {
-		const date = new Date(view_year, view_month, day);
+		const date = date_in_view(day);
 		booking_store.booking_date = {
 			day,
 			month: view_month + 1,
 			year: view_year,
-			week: weekday_names[date.getDay()]
+			week: format(date, 'EEEE') as Weekday
 		};
 	}
 </script>
@@ -126,7 +93,7 @@
 		>
 			<LucideChevronLeft size="16" strokeWidth="2.5" />
 		</button>
-		<h2 class="text-gray-900" aria-live="polite">{month_names[view_month]} {view_year}</h2>
+		<h2 class="text-gray-900" aria-live="polite">{month_label}</h2>
 		<button
 			type="button"
 			class="cursor-pointer rounded-lg border p-1.5 transition-colors duration-75 ease-in hover:bg-zinc-500
@@ -149,6 +116,7 @@
 					{@const selected = is_selected(date)}
 					{@const disabled = is_past(date)}
 					{@const current = is_today(date)}
+					{@const cell_date = date_in_view(date)}
 					<button
 						type="button"
 						class="relative col-span-1 flex aspect-square w-full items-center justify-center rounded-lg border
@@ -158,7 +126,7 @@
 							: disabled
 								? 'cursor-not-allowed bg-[#E0DED9]/30 text-gray-400'
 								: 'cursor-pointer bg-[#E0DED9]/30 hover:bg-zinc-500 hover:text-gray-50'}"
-						aria-label="{month_names[view_month]} {date}, {view_year}{current ? ' (today)' : ''}"
+						aria-label={format(cell_date, 'MMMM d, yyyy') + (current ? ' (today)' : '')}
 						aria-pressed={selected}
 						{disabled}
 						onclick={() => select_date(date)}

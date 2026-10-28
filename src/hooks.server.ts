@@ -1,5 +1,4 @@
 import type { Handle, HandleFetch } from '@sveltejs/kit';
-import { redirect } from '@sveltejs/kit';
 
 import { setAuthCookies, verifyAccessToken, clearAuthCookies } from '$lib/server/functions/auth.js';
 import { COOKIE_KEYS, type AccessTokenClaims, type RefreshResult } from '$lib/utils/constant.js';

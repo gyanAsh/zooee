@@ -1,4 +1,8 @@
+import { TZDate } from '@date-fns/tz';
+import { addMinutes, format, getDate, getHours, getMinutes, getMonth, getYear } from 'date-fns';
 import { SvelteDate } from 'svelte/reactivity';
+
+const INDIA_TIMEZONE = 'Asia/Kolkata';
 
 export type Weekday =
 	'Sunday' | 'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday' | 'Saturday';
@@ -23,89 +27,46 @@ export interface BookingUserDetails {
 	additional_notes: string;
 }
 
-export interface TimezoneDate {
+export interface CalendarDate {
 	year: number;
 	/** 1-12 */
 	month: number;
 	day: number;
 }
 
-const month_names = [
-	'January',
-	'February',
-	'March',
-	'April',
-	'May',
-	'June',
-	'July',
-	'August',
-	'September',
-	'October',
-	'November',
-	'December'
-];
+/** Returns the calendar date in India for the given instant. */
+export function get_india_date(date: Date = new SvelteDate()): CalendarDate {
+	const zoned = TZDate.tz(INDIA_TIMEZONE, date);
 
-export function get_system_timezone(): string {
-	try {
-		return Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
-	} catch {
-		return 'UTC';
-	}
-}
-
-/** Returns the current calendar date in the given IANA timezone. */
-export function get_timezone_date(timezone: string, date: Date = new SvelteDate()): TimezoneDate {
-	try {
-		const parts = new Intl.DateTimeFormat('en-US', {
-			timeZone: timezone,
-			year: 'numeric',
-			month: 'numeric',
-			day: 'numeric'
-		}).formatToParts(date);
-
-		const value = (type: Intl.DateTimeFormatPartTypes) =>
-			Number(parts.find((part) => part.type === type)?.value ?? 0);
-
-		return { year: value('year'), month: value('month'), day: value('day') };
-	} catch {
-		return { year: date.getFullYear(), month: date.getMonth() + 1, day: date.getDate() };
-	}
+	return { year: getYear(zoned), month: getMonth(zoned) + 1, day: getDate(zoned) };
 }
 
 export function format_booking_date(date: BookingDate): string {
 	if (date.day <= 0 || date.month <= 0 || date.year <= 0) return '';
 
-	return `${date.week}, ${month_names[date.month - 1]} ${date.day}, ${date.year}`;
+	return format(TZDate.tz('UTC', date.year, date.month - 1, date.day), 'EEEE, MMMM d, yyyy');
 }
 
 export function add_minutes_to_slot(slot: BookingSlot, minutes: number): BookingSlot {
-	const minutes_in_day = 24 * 60;
-	const total = slot.slot_hour * 60 + slot.slot_mins + minutes;
-	const wrapped = ((total % minutes_in_day) + minutes_in_day) % minutes_in_day;
+	const date = TZDate.tz('UTC', 2000, 0, 1, slot.slot_hour, slot.slot_mins);
+	const next = addMinutes(date, minutes);
 
 	return {
-		slot_hour: Math.floor(wrapped / 60),
-		slot_mins: wrapped % 60,
+		slot_hour: getHours(next),
+		slot_mins: getMinutes(next),
 		slot_format: slot.slot_format
 	};
 }
 
 export function format_booking_slot(slot: BookingSlot): string {
-	const hour = slot.slot_hour % 24;
-	const mins = String(slot.slot_mins).padStart(2, '0');
+	const date = TZDate.tz('UTC', 2000, 0, 1, slot.slot_hour % 24, slot.slot_mins);
 
-	if (slot.slot_format === '12h') {
-		const period = hour >= 12 ? 'PM' : 'AM';
-		const hour12 = hour % 12 || 12;
-
-		return `${hour12}:${mins} ${period}`;
-	}
-
-	return `${String(hour).padStart(2, '0')}:${mins}`;
+	return format(date, slot.slot_format === '12h' ? 'h:mm a' : 'HH:mm');
 }
 
 class BookingStore {
-	timezone = $state<string>(get_system_timezone());
+	/** Today's calendar date in India, where all bookings are handled. */
+	today = $derived(get_india_date());
 
 	booking_date = $state<BookingDate>({
 		day: 0,
